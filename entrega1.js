@@ -19,9 +19,15 @@ function init(){
     createScene();
     createCamera();
     createPattern();
-    createOrange(50, 450);
+    createOrange(100, -450);
     createOrange(-350, 50);
+    createOrange(400, 270);
     createButter(400, 0);
+    createButter(250, 600);
+    //isto da para fazer ali em cima dos carris?
+    createButter(-100, -250);
+    createButter(650, -450);
+    createButter(-600, -350);
     createCar();
 
     render();
@@ -31,7 +37,7 @@ function init(){
     window.addEventListener("keydown", onKeyDown);
 }
 
-function createScene(){
+function createScene() {
     'use strict';
 
     scene = new THREE.Scene();
@@ -57,7 +63,7 @@ function render(){
     renderer.render(scene, camera);
 }
 
-function onKeyDown(e){
+function onKeyDown(e) {
     'use strict';
 
     switch (e.keyCode) {
