@@ -24,11 +24,11 @@ function init(){
     createOrange(400, 270);
     createButter(400, 0);
     createButter(250, 600);
-    //isto da para fazer ali em cima dos carris?
+    //isto da para fazer ali em cima dos carris?a
     createButter(-100, -250);
     createButter(650, -450);
     createButter(-600, -350);
-    createCar();
+    createCar(80, 40, 10);
 
     render();
 
@@ -234,19 +234,19 @@ function createWheel(obj, x, y, z){
 
     torus.rotation.z = Math.PI/2;
 
-    scene.add(torus);
+    obj.add(torus);
 }
 
-function addTop(car, chassis, x, y, z){
-    'use strict'
-
-    geometry = new THREE.BoxGeometry(x, y, z);
-    material = new THREE.MeshBasicMaterial( {color: 0xFFFF80, wireframe: false} );
-    mesh = new THREE.Mesh(geometry, material);
-    // adicionar ao chassis um top
-
-    car.add(chassis);
-}
+// function addTop(car, chassis, x, y, z){
+//     'use strict'
+//
+//     geometry = new THREE.BoxGeometry(x, y, z);
+//     material = new THREE.MeshBasicMaterial( {color: 0xFFFF80, wireframe: false} );
+//     mesh = new THREE.Mesh(geometry, material);
+//     // adicionar ao chassis um top
+//
+//     car.add(chassis);
+// }
 
 function createCar(x, y, z){
     'use strict'
@@ -261,7 +261,14 @@ function createCar(x, y, z){
     createWheel(chassis, -x/2, -y/2, 1);
 
     car = new THREE.Object3D();
-    addTop(car, chassis, x, y, z);
+
+    geometry = new THREE.BoxGeometry(x, y, z);
+    material = new THREE.MeshBasicMaterial( {color: 0xFFFF80, wireframe: false} );
+    mesh = new THREE.Mesh(geometry, material);
+    // adicionar ao chassis um top
+
+    car.add(chassis);
+    //addTop(car, chassis, x, y, z);
 
     car.position.set(0, 0, 2)
     scene.add(car);
