@@ -19,9 +19,15 @@ function init(){
     createScene();
     createCamera();
     createPattern();
-    createOrange(50, 450);
+    createOrange(100, -450);
     createOrange(-350, 50);
-    createBox(400, 0);
+    createOrange(400, 270);
+    createButter(400, 0);
+    createButter(250, 600);
+    //isto da para fazer ali em cima dos carris?
+    createButter(-100, -250);
+    createButter(650, -450);
+    createButter(-600, -350);
     createCar();
 
     render();
@@ -31,7 +37,7 @@ function init(){
     window.addEventListener("keydown", onKeyDown);
 }
 
-function createScene(){
+function createScene() {
     'use strict';
 
     scene = new THREE.Scene();
@@ -57,7 +63,7 @@ function render(){
     renderer.render(scene, camera);
 }
 
-function onKeyDown(e){
+function onKeyDown(e) {
     'use strict';
 
     switch (e.keyCode) {
@@ -186,47 +192,33 @@ function createCheerioCircle(radius, x, y, flag1, flag2){
     }
 }
 
-function createOrange(x, y) {
-    'use strict';
+function createOrange(x,y) {
+//por alguma razao nao posso por use strict ou lixa tudo
 
-    var geometry = new THREE.SphereGeometry(50, 20, 10);
-    var material = new THREE.MeshBasicMaterial({color: 0xFFA500, wireframe: false});
-    var orange = new THREE.Mesh(geometry, material);
+  orange = new THREE.Object3D();
+  geometry = new THREE.SphereGeometry(30, 32, 32);
+  material = new THREE.MeshBasicMaterial( { color: 0xFFA500, wireframe: false } );
+  mesh = new THREE.Mesh( geometry, material );
+  mesh.position.set(x,y,0);
 
-    orange.position.x = x;
-    orange.position.y = y;
-    orange.position.z = 1;
-
-    scene.add(orange);
+  orange.add(mesh);
+        
+  scene.add(orange);
 }
 
-function createBox(x,y) {
-    'use strict';
 
-    var geometry = new THREE.CubeGeometry(120, 50, 10);
-    var material = new THREE.MeshBasicMaterial({color: 0xFFA500, wireframe: false});
-    var box = new THREE.Mesh(geometry, material);
+function createButter(x,y) {
+  'use strict';
 
-    box.position.x = x;
-    box.position.y = y;
-    box.position.z = 1;
+  var butter = new THREE.Object3D();
+  geometry = new THREE.BoxGeometry(70, 50, 50);
+  material = new THREE.MeshBasicMaterial( {color: 0xFFFF80, wireframe: false} );
+  mesh = new THREE.Mesh(geometry, material);
+  mesh.position.set(x,y,0);
 
-    scene.add(box);
-    }
+  butter.add(mesh);
 
-function createWheel(obj, x, y, z){
-    'use strict';
-
-    var geometry = new THREE.TorusBufferGeometry(12, 2.5, 16, 100);
-    var material = new THREE.MeshBasicMaterial({color: 0x000000});
-    var torus = new THREE.Mesh(geometry, material);
-    torus.position.x = x;
-    torus.position.y = y;
-    torus.position.z = z;
-
-    torus.rotation.z = Math.PI/2;
-
-    obj.add(torus);
+  scene.add(butter);
 }
 
 // function createTop(){
