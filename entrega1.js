@@ -232,7 +232,7 @@ function createWheel(obj, x, y, z){
     torus.position.y = y;
     torus.position.z = z;
 
-    torus.rotation.z = Math.PI/2;
+    torus.rotation.x = Math.PI/2;
 
     obj.add(torus);
 }
@@ -251,7 +251,7 @@ function createWheel(obj, x, y, z){
 function createCar(x, y, z){
     'use strict'
 
-    var chassis, car;
+    var chassis, top, car;
 
     chassis = new THREE.Object3D();
 
@@ -264,13 +264,14 @@ function createCar(x, y, z){
 
     geometry = new THREE.BoxGeometry(x, y, z);
     material = new THREE.MeshBasicMaterial( {color: 0xFFFF80, wireframe: false} );
-    mesh = new THREE.Mesh(geometry, material);
-    // adicionar ao chassis um top
+    top = new THREE.Mesh(geometry, material);
+    // criar um topo para o carro
 
     car.add(chassis);
-    //addTop(car, chassis, x, y, z);
+    car.add(top);
 
-    car.position.set(0, 0, 2)
+
+    car.position.set(0, 0, 2);
     scene.add(car);
 
 }
