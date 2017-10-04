@@ -37,8 +37,8 @@ function createScene(){
     scene.background = new THREE.Color(0xf0f0f0);
 
     createFloor(0, 0, 0);
-    createCircularTrack(350, 200, 300, 0);
-    createCircularTrack(350, 200, -300, 0);
+    createCircularTrack(350, 200, 300, 0, 1);
+    createCircularTrack(350, 200, -300, 0, -1);
 
 }
 
@@ -111,18 +111,17 @@ function createPattern() {
   'use strict';
 
   for (var i = -725; i < 750; i+=100) {
-    for (var j = -725; j < 750; j+=50) {
-      var cube = new THREE.Object3D();
-      var material = new THREE.MeshBasicMaterial({ color: 0xFFFFFF});
-      var geometry = new THREE.CubeGeometry(50, 50, 1);
-      var mesh = new THREE.Mesh(geometry, material);
+      for (var j = -725; j < 750; j+=50) {
+          var cube = new THREE.Object3D();
+          var material = new THREE.MeshBasicMaterial({ color: 0xFFFFFF});
+          var geometry = new THREE.CubeGeometry(50, 50, 1);
+          var mesh = new THREE.Mesh(geometry, material);
 
-      cube.add(mesh);
+          cube.add(mesh);
+          cube.position.x = i;
+          cube.position.y = j;
 
-      cube.position.x = i;
-      cube.position.y = j;
-
-      scene.add(cube);
+          scene.add(cube);
     }
   }
 }
@@ -141,45 +140,96 @@ function createCheerio(x, y){
 }
 
 
-function createCircularTrack(r1, r2, x, y){
+function createCircularTrack(r1, r2, x, y, flag){
     'use strict';
 
-    createCheerioCircle(r1, x, y);
-    createCheerioCircle(r2, x, y);
+    createCheerioCircle(r1, x, y, flag, 2);
+    createCheerioCircle(r2, x, y, flag, 1);
 }
 
-function createCheerioCircle(radius, x, y){
+function createCheerioCircle(radius, x, y, flag1, flag2){
     'use strict';
 
-    for (var i = 0; i<=360; i+=10){
-        createCheerio(Math.cos(i * (Math.PI/180))*radius + x, Math.sin(i* (Math.PI/180))*radius + y);
+    if (flag2 == 2){ //circulos de fora
+        if (flag1 == 1) // circulo da direita
+            for (var i = 0; i<360; i+=10){
+                if (i<160 || i>210)
+                    createCheerio(Math.cos(i * (Math.PI/180))*radius + x, Math.sin(i* (Math.PI/180))*radius + y);
+                }
+        else { // circulo da esquerda
+            for (var i = 0; i<360; i+=10){
+                if (i>30 && i<340)
+                    createCheerio(Math.cos(i * (Math.PI/180))*radius + x, Math.sin(i* (Math.PI/180))*radius + y);
+            }
+        }
+    }
+    else { // ciculos de dentro
+        for (var i = 0; i<360; i+=10){
+            createCheerio(Math.cos(i * (Math.PI/180))*radius + x, Math.sin(i* (Math.PI/180))*radius + y);
+        }
     }
 }
 
 function createOrange(x, y) {
-  'use strict';
+    'use strict';
 
-  var geometry = new THREE.SphereGeometry(50, 20, 10);
-  var material = new THREE.MeshBasicMaterial({color: 0xFFA500, wireframe: false});
-  var orange = new THREE.Mesh(geometry, material);
+    var geometry = new THREE.SphereGeometry(50, 20, 10);
+    var material = new THREE.MeshBasicMaterial({color: 0xFFA500, wireframe: false});
+    var orange = new THREE.Mesh(geometry, material);
 
-  orange.position.x = x;
-  orange.position.y = y;
-  orange.position.z = 1;
+    orange.position.x = x;
+    orange.position.y = y;
+    orange.position.z = 1;
 
-  scene.add(orange);
+    scene.add(orange);
 }
 
 function createBox(x,y) {
-  'use strict';
+    'use strict';
 
-  var geometry = new THREE.CubeGeometry(120, 50, 10);
-  var material = new THREE.MeshBasicMaterial({color: 0xFFA500, wireframe: false});
-  var box = new THREE.Mesh(geometry, material);
+    var geometry = new THREE.CubeGeometry(120, 50, 10);
+    var material = new THREE.MeshBasicMaterial({color: 0xFFA500, wireframe: false});
+    var box = new THREE.Mesh(geometry, material);
 
-  box.position.x = x;
-  box.position.y = y;
-  box.position.z = 1;
+    box.position.x = x;
+    box.position.y = y;
+    box.position.z = 1;
 
-  scene.add(box);
+    scene.add(box);
+    }
+
+function createCar(){
+    'use strict'
+
+    var w1, w2, w3, w4, chassis, top, car;
+    w1 = new THREE.Mesh(new THREE.TorusBufferGeometry(12, 2.5, 16, 100));
+    w1.postion.set(-20, 10, 2);
+
+    w2 = new THREE.Mesh(new THREE.TorusBufferGeometry(12, 2.5, 16, 100));
+    w2.postion.set(20, 10, 2);
+
+    w3 = new THREE.Mesh(new THREE.TorusBufferGeometry(12, 2.5, 16, 100));
+    w3.postion.set(20, -10, 2);
+
+    w4 = new THREE.Mesh(new THREE.TorusBufferGeometry(12, 2.5, 16, 100));
+    w4.postion.set(-20, -10, 2);
+
+    chassis = new THREE.Object3D();
+    chassis.add(w1);
+    chassis.add(w2);
+    chassis.add(w3);
+    chassis.add(w4);
+
+    top = new THREE.Mesh(new THREE.CubeGeometry(40, 20, 10));
+    top.position.set(0, 0, 5);
+
+    car = new THREE.Object3D();
+
+    car.add(chassis);
+    car.add(top);
+    car.position.set(0, 0, 0);
+
+    scene.add(car);
+
+
 }
