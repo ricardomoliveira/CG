@@ -28,7 +28,7 @@ function init(){
     createButter(-100, -250);
     createButter(650, -450);
     createButter(-600, -350);
-    createCar(80, 40, 10);
+    createCar();
 
     render();
 
@@ -146,6 +146,20 @@ function createCheerio(x, y){
     scene.add(torus);
 }
 
+function createWheel(obj, x, y, z){
+    'use strict';
+
+    var geometry = new THREE.TorusBufferGeometry(12, 2.5, 16, 100);
+    var material = new THREE.MeshBasicMaterial({color: 0x000000});
+    var torus = new THREE.Mesh(geometry, material);
+    torus.position.x = x;
+    torus.position.y = y;
+    torus.position.z = z;
+
+    torus.rotation.z = Math.PI/2;
+
+    scene.add(torus);
+}
 
 
 function createCircularTrack(r1, r2, x, y, flag){
@@ -179,9 +193,9 @@ function createCheerioCircle(radius, x, y, flag1, flag2){
 }
 
 function createOrange(x,y) {
-    'use strict';
+//por alguma razao nao posso por use strict ou lixa tudo
 
-  var orange = new THREE.Object3D();
+  orange = new THREE.Object3D();
   geometry = new THREE.SphereGeometry(30, 32, 32);
   material = new THREE.MeshBasicMaterial( { color: 0xFFA500, wireframe: false } );
   mesh = new THREE.Mesh( geometry, material );
