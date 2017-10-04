@@ -224,7 +224,7 @@ function createButter(x,y) {
 function createWheel(obj, x, y, z){
     'use strict';
 
-    geometry = new THREE.TorusBufferGeometry(12, 2.5, 16, 100);
+    geometry = new THREE.TorusBufferGeometry(12, 7, 16, 100);
     material = new THREE.MeshBasicMaterial({color: 0x000000, wireframe: false} );
     var torus = new THREE.Mesh(geometry, material);
 
@@ -255,10 +255,10 @@ function createCar(x, y, z){
 
     chassis = new THREE.Object3D();
 
-    createWheel(chassis, -x/2, y/2, 1);
-    createWheel(chassis, x/2, y/2, 1);
-    createWheel(chassis, x/2, -y/2, 1);
-    createWheel(chassis, -x/2, -y/2, 1);
+    createWheel(chassis, -x/2 + 5, y/2, 1);
+    createWheel(chassis, x/2 - 5, y/2, 1);
+    createWheel(chassis, x/2 - 5, -y/2, 1);
+    createWheel(chassis, -x/2 + 5, -y/2, 1);
 
     car = new THREE.Object3D();
 
