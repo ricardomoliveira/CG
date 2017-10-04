@@ -22,6 +22,7 @@ function init(){
     createOrange(50, 450);
     createOrange(-350, 50);
     createBox(400, 0);
+    createCar();
 
     render();
 
@@ -139,6 +140,21 @@ function createCheerio(x, y){
     scene.add(torus);
 }
 
+function createWheel(obj, x, y, z){
+    'use strict';
+
+    var geometry = new THREE.TorusBufferGeometry(12, 2.5, 16, 100);
+    var material = new THREE.MeshBasicMaterial({color: 0x000000});
+    var torus = new THREE.Mesh(geometry, material);
+    torus.position.x = x;
+    torus.position.y = y;
+    torus.position.z = z;
+
+    torus.rotation.z = Math.PI/2;
+
+    scene.add(torus);
+}
+
 
 function createCircularTrack(r1, r2, x, y, flag){
     'use strict';
@@ -198,38 +214,42 @@ function createBox(x,y) {
     scene.add(box);
     }
 
-function createCar(){
-    'use strict'
+function createWheel(obj, x, y, z){
+    'use strict';
 
-    var w1, w2, w3, w4, chassis, top, car;
-    w1 = new THREE.Mesh(new THREE.TorusBufferGeometry(12, 2.5, 16, 100));
-    w1.postion.set(-20, 10, 2);
+    var geometry = new THREE.TorusBufferGeometry(12, 2.5, 16, 100);
+    var material = new THREE.MeshBasicMaterial({color: 0x000000});
+    var torus = new THREE.Mesh(geometry, material);
+    torus.position.x = x;
+    torus.position.y = y;
+    torus.position.z = z;
 
-    w2 = new THREE.Mesh(new THREE.TorusBufferGeometry(12, 2.5, 16, 100));
-    w2.postion.set(20, 10, 2);
+    torus.rotation.z = Math.PI/2;
 
-    w3 = new THREE.Mesh(new THREE.TorusBufferGeometry(12, 2.5, 16, 100));
-    w3.postion.set(20, -10, 2);
-
-    w4 = new THREE.Mesh(new THREE.TorusBufferGeometry(12, 2.5, 16, 100));
-    w4.postion.set(-20, -10, 2);
-
-    chassis = new THREE.Object3D();
-    chassis.add(w1);
-    chassis.add(w2);
-    chassis.add(w3);
-    chassis.add(w4);
-
-    top = new THREE.Mesh(new THREE.CubeGeometry(40, 20, 10));
-    top.position.set(0, 0, 5);
-
-    car = new THREE.Object3D();
-
-    car.add(chassis);
-    car.add(top);
-    car.position.set(0, 0, 0);
-
-    scene.add(car);
-
-
+    obj.add(torus);
 }
+
+// function createTop(){
+//
+//
+// }
+
+// function createCar(){
+//     'use strict'
+//
+//     var chassis, car;
+//
+//     car = new THREE.Object3D();
+//
+//     chassis = new THREE.Object3D();
+//
+//     createWheel(chassis, -40, 20, 1);
+//     createWheel(chassis, 40, 20, 1);
+//     createWheel(chassis, 40, -20, 1);
+//     createWheel(chassis, -40, -20, 1);
+//
+//     createTop(chassis, );
+//
+//
+//
+// }
