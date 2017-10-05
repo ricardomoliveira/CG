@@ -19,15 +19,17 @@ function init(){
     createScene();
     createCamera();
     createPattern();
+
     createOrange(100, -450);
     createOrange(-350, 50);
     createOrange(400, 270);
+
     createButter(400, 0);
     createButter(250, 600);
-    //isto da para fazer ali em cima dos carris?a
     createButter(-100, -250);
     createButter(650, -450);
     createButter(-600, -350);
+    
     createCar(80, 40, 10);
 
     render();
@@ -193,9 +195,9 @@ function createCheerioCircle(radius, x, y, flag1, flag2){
 }
 
 function createOrange(x,y) {
-//por alguma razao nao posso por use strict ou lixa tudo
+  'use strict';
 
-  orange = new THREE.Object3D();
+  var orange = new THREE.Object3D();
   geometry = new THREE.SphereGeometry(30, 32, 32);
   material = new THREE.MeshBasicMaterial( { color: 0xFFA500, wireframe: false } );
   mesh = new THREE.Mesh( geometry, material );
@@ -271,7 +273,7 @@ function createCar(x, y, z){
     car.add(top);
 
 
-    car.position.set(0, 0, 2);
+    car.position.set(0, 0, 2);      //esta a voar? nao entendi porque é que o z = 2
     scene.add(car);
 
 }
