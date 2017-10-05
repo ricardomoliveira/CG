@@ -1,6 +1,10 @@
 
+//Desculpem o afk mas acordei mais doente ainda, mas estou ok agora
+//
+//ok nao entendo o updateCar, 
+
+
 /* Criar classes */
-/* Usar o keyUp /*
 
 /*global THREE*/
 var camera, scene, renderer;
@@ -46,7 +50,7 @@ function init(){
 
     window.addEventListener("resize", onResize);
     window.addEventListener( 'keydown', onKeyDown, false );
-	window.addEventListener( 'keyup', onKeyUp, false );
+	  window.addEventListener( 'keyup', onKeyUp, false );
 }
 
 function animate() {
@@ -147,9 +151,9 @@ function onKeyUp(e) {
 function updateCar() {
     'use strict';
 
-    var add = 0;
+    var add = 0;                      //o que faz esta var 'add'?
     var walking = false;
-    var delta = clock.getDelta();
+    var delta = clock.getDelta();     ///qual e' a intencao deste delta?
     var moveDistance = 0;
 
     if (moveForward == true) // up arrow
@@ -158,7 +162,7 @@ function updateCar() {
             car.translateX(moveDistance+2)
        }, 750); //delay is in milliseconds
 
-        car.translateX(moveDistance+3);
+
     }
 
     if (moveBackward == true)//down arrow
