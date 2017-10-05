@@ -5,7 +5,17 @@
 /*global THREE*/
 var camera, scene, renderer;
 
-var geometry, material, mesh;
+var geometry, material, mesh, car;
+
+var clock = new THREE.Clock();
+
+
+			var moveForward = false;
+			var moveBackward = false;
+			var moveLeft = false;
+			var moveRight = false;
+
+var move = THREE.Vector3(1, 1, 0);
 
 function init(){
     'use strict';
@@ -33,8 +43,16 @@ function init(){
     render();
 
     window.addEventListener("resize", onResize);
+    window.addEventListener( 'keydown', onKeyDown, false );
+	window.addEventListener( 'keyup', onKeyUp, false );
+}
 
-    window.addEventListener("keydown", onKeyDown);
+function animate() {
+
+    updateCar();
+    render();
+
+    requestAnimationFrame(animate);
 }
 
 function createScene() {
@@ -63,18 +81,77 @@ function render(){
     renderer.render(scene, camera);
 }
 
+
 function onKeyDown(e) {
+    if (e.keyCode == 38) // up arrow
+    {
+        moveForward = true;
+    }
+
+    if (e.keyCode == 40)//down arrow
+    {
+        moveBackward = true;
+    }
+
+    if (e.keyCode == 37) //left arrow
+    {
+        moveLeft = true;
+    }
+
+    if (e.keyCode == 39) // right arrow
+    {
+        moveRight = true;
+    }
+}
+
+function onKeyUp(e) {
+    if (e.keyCode == 38) // up arrow
+    {
+        moveForward = false;
+    }
+
+    if (e.keyCode == 40)//down arrow
+    {
+        moveBackward = false;
+    }
+
+    if (e.keyCode == 37) //left arrow
+    {
+        moveLeft = false;
+    }
+
+    if (e.keyCode == 39) // right arrow
+    {
+        moveRight = false;
+    }
+}
+
+function updateCar() {
     'use strict';
 
-    switch (e.keyCode) {
-        case 65:
-        case 97:
-            scene.traverse(function (node){
-                if (node instanceof THREE.Mesh) {
-                    node.material.wireframe = !node.material.wireframe;
-                }
-            });
-            break;
+    var walking = false;
+    var delta = clock.getDelta();
+    var moveDistance = 0;
+
+
+    if (moveForward == true) // up arrow
+    {
+        car.translateX(moveDistance+3);
+    }
+
+    if (moveBackward == true)//down arrow
+    {
+        car.translateX(moveDistance-3);
+    }
+
+    if (moveLeft == true) //left arrow
+    {
+        car.rotation.z += 0.05;
+    }
+
+    if (moveRight == true) // right arrow
+    {
+        car.rotation.z -= 0.05;
     }
 
     render();
@@ -90,7 +167,7 @@ function onResize(){
         camera.updateProjectionMatrix();
     }
 
-    render();
+    //render();
 
 }
 
@@ -99,7 +176,7 @@ function createFloor(x, y, z) {
 
     var table = new THREE.Object3D();
 
-    material = new THREE.MeshBasicMaterial({ color: 0xED113D, wireframe: false});
+    material = new THREE.MeshBasicMaterial({ color: 0x009DE0, wireframe: false});
 
     geometry = new THREE.CubeGeometry(1500, 1500, 1);
     mesh = new THREE.Mesh(geometry, material);
@@ -136,7 +213,7 @@ function createPattern() {
 function createCheerio(x, y){
     'use strict';
 
-    var geometry = new THREE.TorusBufferGeometry(12, 2.5, 16, 100);
+    var geometry = new THREE.TorusBufferGeometry(12, 2.5, 8, 100);
     var material = new THREE.MeshBasicMaterial({color: 0x000000});
     var torus = new THREE.Mesh(geometry, material);
     torus.position.x = x;
@@ -237,21 +314,21 @@ function createWheel(obj, x, y, z){
     obj.add(torus);
 }
 
-// function addTop(car, chassis, x, y, z){
-//     'use strict'
-//
-//     geometry = new THREE.BoxGeometry(x, y, z);
-//     material = new THREE.MeshBasicMaterial( {color: 0xFFFF80, wireframe: false} );
-//     mesh = new THREE.Mesh(geometry, material);
-//     // adicionar ao chassis um top
-//
-//     car.add(chassis);
-// }
+function addTop(car, x, y, z){
+    'use strict'
+
+    geometry = new THREE.BoxGeometry(x, y, z);
+    material = new THREE.MeshBasicMaterial( {color: 0xff2800, wireframe: false} );
+    var top = new THREE.Mesh(geometry, material);
+    // adicionar ao chassis um top
+
+    car.add(top);
+}
 
 function createCar(x, y, z){
     'use strict'
 
-    var chassis, top, car;
+    var chassis, top;
 
     chassis = new THREE.Object3D();
 
@@ -262,16 +339,10 @@ function createCar(x, y, z){
 
     car = new THREE.Object3D();
 
-    geometry = new THREE.BoxGeometry(x, y, z);
-    material = new THREE.MeshBasicMaterial( {color: 0xFFFF80, wireframe: false} );
-    top = new THREE.Mesh(geometry, material);
-    // criar um topo para o carro
-
+    addTop(car, x, y, z);
     car.add(chassis);
-    car.add(top);
 
-
-    car.position.set(0, 0, 2);
+    car.position.set(100, 200, 2);
     scene.add(car);
 
 }
