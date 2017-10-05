@@ -1,4 +1,4 @@
-/* Esclarecer a questão do "Far" da camera e da profundidade do cubo */
+
 /* Criar classes */
 /* Usar o keyUp /*
 
@@ -9,15 +9,15 @@ var geometry, material, mesh, car;
 
 var clock = new THREE.Clock();
 
-
-			var moveForward = false;
-			var moveBackward = false;
-			var moveLeft = false;
-			var moveRight = false;
+  var moveForward = false;
+  var moveBackward = false;
+  var moveLeft = false;
+  var moveRight = false;
 
 var move = THREE.Vector3(1, 1, 0);
 
 function init(){
+
     'use strict';
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -32,7 +32,7 @@ function init(){
 
     createOrange(100, -450);
     createOrange(-350, 50);
-    createOrange(400, 270);
+    createOrange(400, 500);
 
     createButter(400, 0);
     createButter(250, 600);
@@ -41,14 +41,6 @@ function init(){
     createButter(-600, -350);
     
     createCar(80, 40, 10);
-    createOrange(400, 500);
-    createButter(400, 0);
-    createButter(250, 600);
-    //isto da para fazer ali em cima dos carris?a
-    createButter(-100, 450);
-    createButter(650, -450);
-    createButter(-600, -350);
-    createCar(100, 50, 10);
 
     render();
 
