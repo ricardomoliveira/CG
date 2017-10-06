@@ -1,10 +1,6 @@
-
-//Desculpem o afk mas acordei mais doente ainda, mas estou ok agora
-//
-//ok nao entendo o updateCar, 
-
-
+/* Esclarecer a questão do "Far" da camera e da profundidade do cubo */
 /* Criar classes */
+/* Usar o keyUp /*
 
 /*global THREE*/
 var camera, scene, renderer;
@@ -13,15 +9,15 @@ var geometry, material, mesh, car;
 
 var clock = new THREE.Clock();
 
-  var moveForward = false;
-  var moveBackward = false;
-  var moveLeft = false;
-  var moveRight = false;
+
+			var moveForward = false;
+			var moveBackward = false;
+			var moveLeft = false;
+			var moveRight = false;
 
 var move = THREE.Vector3(1, 1, 0);
 
 function init(){
-
     'use strict';
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -33,24 +29,22 @@ function init(){
     createScene();
     createCamera();
     createPattern();
-
     createOrange(100, -450);
     createOrange(-350, 50);
     createOrange(400, 500);
-
     createButter(400, 0);
     createButter(250, 600);
-    createButter(-100, -250);
+    //isto da para fazer ali em cima dos carris?a
+    createButter(-100, 450);
     createButter(650, -450);
     createButter(-600, -350);
-    
-    createCar(80, 40, 10);
+    createCar(100, 50, 10);
 
     render();
 
     window.addEventListener("resize", onResize);
     window.addEventListener( 'keydown', onKeyDown, false );
-	  window.addEventListener( 'keyup', onKeyUp, false );
+	window.addEventListener( 'keyup', onKeyUp, false );
 }
 
 function animate() {
@@ -151,9 +145,9 @@ function onKeyUp(e) {
 function updateCar() {
     'use strict';
 
-    var add = 0;                      //o que faz esta var 'add'?
+    var add = 0;
     var walking = false;
-    var delta = clock.getDelta();     ///qual e' a intencao deste delta?
+    var delta = clock.getDelta();
     var moveDistance = 0;
 
     if (moveForward == true) // up arrow
@@ -162,7 +156,7 @@ function updateCar() {
             car.translateX(moveDistance+2)
        }, 750); //delay is in milliseconds
 
-
+        car.translateX(moveDistance+3);
     }
 
     if (moveBackward == true)//down arrow
@@ -300,13 +294,12 @@ function createCheerioCircle(radius, x, y, flag1, flag2){
 
 function createOrange(x,y) {
 
-  'use strict';
+    'use strict';
 
   var orange = new THREE.Object3D();
-  geometry = new THREE.SphereGeometry(30, 32, 32);
-  material = new THREE.MeshBasicMaterial( { color: 0xFFA500, wireframe: false } );
-  mesh = new THREE.Mesh( geometry, material );
-
+  var geometry = new THREE.SphereGeometry(40, 32, 22);
+  var material = new THREE.MeshBasicMaterial( { color: 0xFFA500, wireframe: false});
+  var mesh = new THREE.Mesh( geometry, material );
   mesh.position.set(x,y,0);
 
   orange.add(mesh);
@@ -383,11 +376,7 @@ function createCar(x, y, z){
 
     car.add(chassis);
 
-
-    car.position.set(0, 0, 2);      //esta a voar? nao entendi porque é que o z = 2
-    
     car.position.set(100, 200, 2);
-    
     scene.add(car);
 
 }
