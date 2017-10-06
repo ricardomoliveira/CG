@@ -8,6 +8,7 @@ var camera, scene, renderer;
 var geometry, material, mesh, car;
 
 var clock = new THREE.Clock();
+    var moveDistance = 0;
 
 
 			var moveForward = false;
@@ -83,6 +84,9 @@ function render(){
 
 
 function onKeyDown(e) {
+
+	    var delta = clock.getDelta();
+
     if (e.keyCode == 65 || e.keyCode == 97) {
         scene.traverse(function(node) {
             if (node instanceof THREE.Mesh) {
@@ -93,6 +97,7 @@ function onKeyDown(e) {
 
     if (e.keyCode == 38) // up arrow
     {
+    	moveDistance +=delta;
         moveForward = true;
     }
 
@@ -147,8 +152,6 @@ function updateCar() {
 
     var add = 0;
     var walking = false;
-    var delta = clock.getDelta();
-    var moveDistance = 0;
 
     if (moveForward == true) // up arrow
     {
