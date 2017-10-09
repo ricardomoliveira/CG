@@ -34,7 +34,7 @@ function init(){
 
     createScene();
     createCamera();
-    createPattern();
+    //createPattern();
     createOrange(100, -450);
     createOrange(-350, 50);
     createOrange(400, 500);
@@ -76,7 +76,10 @@ function createScene() {
 
 function createCamera(){
     'use strict';
-    camera = new THREE.OrthographicCamera(-1500, 1500, 1000, -1000, 0.1, 100);
+    //camera = new THREE.OrthographicCamera(-1500, 1500, 1000, -1000, 0.1, 100);
+	camera = new THREE.OrthographicCamera(-window.innerWidth/2, window.innerWidth/2, window.innerHeight/2, -window.innerHeight/2, 0.1, 100);
+	winWidth = window.innerWidth;
+	winHeight = window.innerHeight;
 
     camera.position.z=50;
     camera.lookAt(scene.position);
@@ -188,17 +191,17 @@ function onResize(){
 
 	renderer.setSize(window.innerWidth, window.innerHeight);
 
-	if ( window.innerWidth != winWidth ){
-		camera.right = window.innerWidth / 2;
-		camera.left = (window.innerWidth / -2);
-		camera.top = (window.innerWidth / 1.5) / 2;
-		camera.bottom = - (window.innerWidth / 1.5) / 2;
+ 	if ( window.innerWidth != winWidth ){
+		camera.right = window.innerWidth/2;
+		camera.left = -window.innerWidth/2;
+		camera.top = (window.innerWidth/1.5) / 2;
+		camera.bottom = (-window.innerWidth/1.5) / 2;
 	}
 	else if ( window.innerHeight != winHeight ){
-		camera.top = window.innerHeight / 2;
-		camera.bottom = - (window.innerHeight / 2);
-		camera.right = (window.innerHeight * 1.5) / 2;
-		camera.left = -((window.innerHeight * 1.5) / 2);
+		camera.top =
+		camera.bottom =
+		camera.right =
+		camera.left =
 	}
 
 	winHeight = camera.top - camera.bottom;
@@ -215,7 +218,7 @@ function createFloor(x, y, z) {
 
     material = new THREE.MeshBasicMaterial({ color: 0x009DE0, wireframe: false});
 
-    geometry = new THREE.CubeGeometry(1500, 1500, 1);
+    geometry = new THREE.CubeGeometry(window.innerHeight, window.innerHeight, 1);
     mesh = new THREE.Mesh(geometry, material);
 
     table.add(mesh);
@@ -228,24 +231,24 @@ function createFloor(x, y, z) {
 
 }
 
-function createPattern() {
-  'use strict';
-
-  for (var i = -725; i < 750; i+=100) {
-      for (var j = -725; j < 750; j+=50) {
-          var cube = new THREE.Object3D();
-          var material = new THREE.MeshBasicMaterial({ color: 0xFFFFFF});
-          var geometry = new THREE.CubeGeometry(50, 50, 1);
-          var mesh = new THREE.Mesh(geometry, material);
-
-          cube.add(mesh);
-          cube.position.x = i;
-          cube.position.y = j;
-
-          scene.add(cube);
-    }
-  }
-}
+// function createPattern() {
+//   'use strict';
+//
+//   for (var i = -725; i < 750; i+=100) {
+//       for (var j = -725; j < 750; j+=50) {
+//           var cube = new THREE.Object3D();
+//           var material = new THREE.MeshBasicMaterial({ color: 0xFFFFFF});
+//           var geometry = new THREE.CubeGeometry(50, 50, 1);
+//           var mesh = new THREE.Mesh(geometry, material);
+//
+//           cube.add(mesh);
+//           cube.position.x = i;
+//           cube.position.y = j;
+//
+//           scene.add(cube);
+//     }
+//   }
+// }
 
 function createCheerio(x, y){
     'use strict';
