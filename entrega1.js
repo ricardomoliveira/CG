@@ -9,6 +9,12 @@ var geometry, material, mesh, car;
 
 var clock = new THREE.Clock();
 
+var camfactor = 1.5;
+
+var winWidth, winHeight;
+
+var wrfrm = false;
+
 
 			var moveForward = false;
 			var moveBackward = false;
@@ -40,9 +46,9 @@ function init(){
     createButter(-600, -350);
     createCar(100, 50, 10);
 
-    render();
+    //render();
 
-    window.addEventListener("resize", onResize);
+    window.addEventListener( 'resize', onResize);
     window.addEventListener( 'keydown', onKeyDown, false );
 	window.addEventListener( 'keyup', onKeyUp, false );
 }
@@ -50,6 +56,7 @@ function init(){
 function animate() {
 
     updateCar();
+	updateWire();
     render();
 
     requestAnimationFrame(animate);
@@ -70,6 +77,7 @@ function createScene() {
 function createCamera(){
     'use strict';
     camera = new THREE.OrthographicCamera(-1500, 1500, 1000, -1000, 0.1, 100);
+
     camera.position.z=50;
     camera.lookAt(scene.position);
 
@@ -84,12 +92,11 @@ function render(){
 
 function onKeyDown(e) {
     if (e.keyCode == 65 || e.keyCode == 97) {
-        scene.traverse(function(node) {
-            if (node instanceof THREE.Mesh) {
-                node.material.wireframe = !node.material.wireframe;
-            }
-        });
-    }
+		if ( wrfrm == false)
+			wrfrm = true;
+		else
+		wrfrm = false;
+	}
 
     if (e.keyCode == 38) // up arrow
     {
@@ -145,18 +152,14 @@ function onKeyUp(e) {
 function updateCar() {
     'use strict';
 
-    var add = 0;
-    var walking = false;
-    var delta = clock.getDelta();
-    var moveDistance = 0;
+    //var add = 0;
+    //var walking = false;
+    clock.starts();
+    //var moveDistance = 0;
 
     if (moveForward == true) // up arrow
     {
-        setTimeout(function(){
-            car.translateX(moveDistance+2)
-       }, 750); //delay is in milliseconds
-
-        car.translateX(moveDistance+3);
+        car.translateX(moveDistance+delta*100);
     }
 
     if (moveBackward == true)//down arrow
@@ -183,14 +186,25 @@ function updateCar() {
 function onResize(){
     'use strict';
 
-    renderer.setSize(window.innerWidth, window.innerHeight);
+	renderer.setSize(window.innerWidth, window.innerHeight);
 
-    if (window.innerHeight > 0 && window.innerWidth > 0){
-        camera.aspect = renderer.getSize().width / renderer.getSize().height;
-        camera.updateProjectionMatrix();
-    }
+	if ( window.innerWidth != winWidth ){
+		camera.right = window.innerWidth / 2;
+		camera.left = (window.innerWidth / -2);
+		camera.top = (window.innerWidth / 1.5) / 2;
+		camera.bottom = - (window.innerWidth / 1.5) / 2;
+	}
+	else if ( window.innerHeight != winHeight ){
+		camera.top = window.innerHeight / 2;
+		camera.bottom = - (window.innerHeight / 2);
+		camera.right = (window.innerHeight * 1.5) / 2;
+		camera.left = -((window.innerHeight * 1.5) / 2);
+	}
 
-    //render();
+	winHeight = camera.top - camera.bottom;
+	winWidth = camera.right - camera.left;
+
+	camera.updateProjectionMatrix();
 
 }
 
@@ -379,4 +393,12 @@ function createCar(x, y, z){
     car.position.set(100, 200, 2);
     scene.add(car);
 
+}
+
+function updateWire(){
+	scene.traverse(function(node) {
+		if (node instanceof THREE.Mesh) {
+			node.material.wireframe = wrfrm;
+		}
+	});
 }
