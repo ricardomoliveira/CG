@@ -7,7 +7,7 @@ var camera, scene, renderer;
 
 var geometry, material, mesh, car;
 
-var clock = new THREE.Clock();
+var clock;
 
 var camfactor = 1.5;
 
@@ -25,6 +25,8 @@ var move = THREE.Vector3(1, 1, 0);
 
 function init(){
     'use strict';
+
+		clock =  new THREE.Clock();
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
 
@@ -50,7 +52,7 @@ function init(){
 
     window.addEventListener( 'resize', onResize);
     window.addEventListener( 'keydown', onKeyDown, false );
-	window.addEventListener( 'keyup', onKeyUp, false );
+		window.addEventListener( 'keyup', onKeyUp, false );
 }
 
 function animate() {
@@ -91,20 +93,22 @@ function render(){
 
 
 function onKeyDown(e) {
-    if (e.keyCode == 65 || e.keyCode == 97) {
-		if (wrfrm == false)
-			wrfrm = true;
-		else
-			wrfrm = false;
+		if (e.keyCode == 65 || e.keyCode == 97) {
+			if (wrfrm == false)
+				wrfrm = true;
+			else
+				wrfrm = false;
     }
 
     if (e.keyCode == 38) // up arrow
     {
+				car.acceleration = 100;
         moveForward = true;
     }
 
     if (e.keyCode == 40)//down arrow
     {
+				car.acceleration = -100;
         moveBackward = true;
     }
 
@@ -120,22 +124,14 @@ function onKeyDown(e) {
 }
 
 function onKeyUp(e) {
-    if (e.keyCode == 38) // up arrow
+		if (e.keyCode == 38) // up arrow
     {
-        setTimeout(function()
-        {
         moveForward = false;
-        }, 500); //delay is in milliseconds
-
     }
 
     if (e.keyCode == 40)//down arrow
     {
-        setTimeout(function()
-        {
         moveBackward = false;
-        }, 500); //delay is in milliseconds
-
     }
 
     if (e.keyCode == 37) //left arrow
@@ -151,25 +147,20 @@ function onKeyUp(e) {
 
 function updateCar() {
     'use strict';
-
     var add = 0;
-    var walking = false;
-    var delta = clock.getDelta();
-    var moveDistance = 0;
+		var delta = clock.getDelta();
 
     if (moveForward == true) // up arrow
     {
-        car.translateX(moveDistance+delta*100);
+					car.velocity = car.acceleration*delta;
+					car.translateX(car.velocity+(0.5)*car.acceleration*delta*delta);
     }
 
     if (moveBackward == true)//down arrow
     {
-        setTimeout(function(){
-            car.translateX(moveDistance-2)
-       }, 750); //delay is in milliseconds
-        car.translateX(moveDistance-3);
-    }
-
+			car.velocity = car.acceleration*delta;
+			car.translateX(car.velocity+(0.5)*car.acceleration*delta*delta);
+}
     if (moveLeft == true) //left arrow
     {
         car.rotation.z += 0.05;
@@ -366,7 +357,7 @@ function addTop(car, x, y, z){
 function createCar(x, y, z){
     'use strict'
 
-    var chassis, top;
+    var chassis, top, acceleration, velocity;
 
     chassis = new THREE.Object3D();
 
@@ -387,6 +378,9 @@ function createCar(x, y, z){
     cone.position.z=15;
     cone.rotation.z+=Math.PI*1.5;
     car.add(cone);
+
+		car.velocity = 0;
+		car.acceleration = 10;
 
     car.add(chassis);
 
