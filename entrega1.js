@@ -13,6 +13,8 @@ var camfactor = 1.5;
 
 var winWidth, winHeight;
 
+var wrfrm = false;
+
 
 			var moveForward = false;
 			var moveBackward = false;
@@ -54,6 +56,7 @@ function init(){
 function animate() {
 
     updateCar();
+	updateWire();
     render();
 
     requestAnimationFrame(animate);
@@ -89,11 +92,10 @@ function render(){
 
 function onKeyDown(e) {
     if (e.keyCode == 65 || e.keyCode == 97) {
-        scene.traverse(function(node) {
-            if (node instanceof THREE.Mesh) {
-                node.material.wireframe = !node.material.wireframe;
-            }
-        });
+		if (wrfrm == false)
+			wrfrm = true;
+		else
+			wrfrm = false;
     }
 
     if (e.keyCode == 38) // up arrow
@@ -391,4 +393,13 @@ function createCar(x, y, z){
     car.position.set(100, 200, 2);
     scene.add(car);
 
+}
+
+function updateWire(){
+
+	scene.traverse(function(node) {
+		if (node instanceof THREE.Mesh) {
+			node.material.wireframe = wrfrm;
+		}
+	});
 }
