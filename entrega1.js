@@ -160,7 +160,7 @@ function updateCar() {
     {
 			car.velocity = car.acceleration*delta;
 			car.translateX(car.velocity+(0.5)*car.acceleration*delta*delta);
-}
+
     if (moveLeft == true) //left arrow
     {
         car.rotation.z += 0.05;
