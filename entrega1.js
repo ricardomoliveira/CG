@@ -8,13 +8,10 @@ var camera, scene, renderer;
 var geometry, material, mesh, car;
 
 var clock = new THREE.Clock();
-    var moveDistance = 0;
 
 var camfactor = 1.5;
 
 var winWidth, winHeight;
-
-var wrfrm = false;
 
 
 			var moveForward = false;
@@ -57,7 +54,6 @@ function init(){
 function animate() {
 
     updateCar();
-	updateWire();
     render();
 
     requestAnimationFrame(animate);
@@ -92,19 +88,16 @@ function render(){
 
 
 function onKeyDown(e) {
-
-	    var delta = clock.getDelta();
-
     if (e.keyCode == 65 || e.keyCode == 97) {
-		if ( wrfrm == false)
-			wrfrm = true;
-		else
-		wrfrm = false;
-	}
+        scene.traverse(function(node) {
+            if (node instanceof THREE.Mesh) {
+                node.material.wireframe = !node.material.wireframe;
+            }
+        });
+    }
 
     if (e.keyCode == 38) // up arrow
     {
-    	moveDistance +=delta;
         moveForward = true;
     }
 
@@ -157,15 +150,10 @@ function onKeyUp(e) {
 function updateCar() {
     'use strict';
 
-<<<<<<< HEAD
-    //var add = 0;
-    //var walking = false;
-    clock.starts();
-    //var moveDistance = 0;
-=======
     var add = 0;
     var walking = false;
->>>>>>> faa1fc1920c6b4a40fb30610c455f45464f9e540
+    var delta = clock.getDelta();
+    var moveDistance = 0;
 
     if (moveForward == true) // up arrow
     {
@@ -403,12 +391,4 @@ function createCar(x, y, z){
     car.position.set(100, 200, 2);
     scene.add(car);
 
-}
-
-function updateWire(){
-	scene.traverse(function(node) {
-		if (node instanceof THREE.Mesh) {
-			node.material.wireframe = wrfrm;
-		}
-	});
 }
