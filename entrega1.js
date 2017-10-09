@@ -159,15 +159,12 @@ function updateCar() {
 
     if (moveForward == true) // up arrow
     {
-        car.translateX(moveDistance+delta*100);
+        car.translateX(moveDistance+delta*200);
     }
 
     if (moveBackward == true)//down arrow
     {
-        setTimeout(function(){
-            car.translateX(moveDistance-2)
-       }, 750); //delay is in milliseconds
-        car.translateX(moveDistance-3);
+        car.translateX(moveDistance-delta*200);
     }
 
     if (moveLeft == true) //left arrow
