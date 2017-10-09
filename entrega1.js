@@ -58,7 +58,7 @@ function init(){
 function animate() {
 
     updateCar();
-	updateWire();
+		updateWire();
     render();
 
     requestAnimationFrame(animate);
@@ -155,14 +155,22 @@ function updateCar() {
 
     if (moveForward == true) // up arrow
     {
-					car.velocity = car.acceleration*delta;
-					car.translateX(car.velocity+(0.5)*car.acceleration*delta*delta);
+				car.velocity += car.acceleration*delta;
+				car.velocity *= car.drag;
+				car.translateX(car.velocity+(0.5)*car.acceleration*delta*delta);
     }
+
+		if (moveForward == false) {
+			car.acceleration = 0;
+			car.velocity -= car.velocity*delta;
+			car.translateX(car.velocity);
+		}
 
     if (moveBackward == true)//down arrow
     {
 			car.velocity = car.acceleration*delta;
 			car.translateX(car.velocity+(0.5)*car.acceleration*delta*delta);
+	}
 
     if (moveLeft == true) //left arrow
     {
@@ -384,6 +392,7 @@ function createCar(x, y, z){
 
 		car.velocity = 0;
 		car.acceleration = 10;
+		car.drag = 0.99;
 
     car.add(chassis);
 
