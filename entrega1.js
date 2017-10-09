@@ -1,7 +1,6 @@
 /* Esclarecer a questão do "Far" da camera e da profundidade do cubo */
 /* Criar classes */
 /* Usar o keyUp /*
-
 /*global THREE*/
 var camera = {
 	left: -1500,
