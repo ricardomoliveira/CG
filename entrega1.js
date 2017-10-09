@@ -8,7 +8,8 @@ var camera = {
 	top: 1000,
 	bottom: -1000,
 	near: 0.1,
-	far: 100
+	far: 100,
+	aspect:1
 };
 
 var scene, renderer;
@@ -17,28 +18,29 @@ var geometry, material, mesh, car;
 
 var clock;
 
-var camfactor = 1.5;
-
-var winWidth, winHeight;
+var winWidth;
 
 var wrfrm = false;
 
-
-			var moveForward = false;
-			var moveBackward = false;
-			var moveLeft = false;
-			var moveRight = false;
+var moveForward = false;
+var moveBackward = false;
+var moveLeft = false;
+var moveRight = false;
 
 var move = THREE.Vector3(1, 1, 0);
 
 function init(){
     'use strict';
 
-		clock =  new THREE.Clock();
+	clock =  new THREE.Clock();
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
 
     renderer.setSize(window.innerWidth, window.innerHeight);
+
+	winWidth = window.innerWidth;
+
+	camera.aspect = renderer.getSize().width / renderer.getSize().height;
 
     document.body.appendChild(renderer.domElement);
 
@@ -60,13 +62,13 @@ function init(){
 
     window.addEventListener( 'resize', onResize);
     window.addEventListener( 'keydown', onKeyDown, false );
-		window.addEventListener( 'keyup', onKeyUp, false );
+	window.addEventListener( 'keyup', onKeyUp, false );
 }
 
 function animate() {
 
     updateCar();
-		updateWire();
+	updateWire();
     render();
 
     requestAnimationFrame(animate);
@@ -86,7 +88,8 @@ function createScene() {
 
 function createCamera(){
     'use strict';
-    camera = new THREE.OrthographicCamera(camera.left, camera.right, camera.top, camera.bottom, camera.near, camera.far);
+    //camera = new THREE.OrthographicCamera(camera.left, camera.right, camera.top, camera.bottom, camera.near, camera.far);
+	camera = new THREE.OrthographicCamera(-window.innerWidth, window.innerWidth, window.innerHeight, -window.innerHeight, 0.1, 100);
 
     camera.position.z=50;
     camera.lookAt(scene.position);
@@ -101,22 +104,22 @@ function render(){
 
 
 function onKeyDown(e) {
-		if (e.keyCode == 65 || e.keyCode == 97) {
-			if (wrfrm == false)
-				wrfrm = true;
-			else
-				wrfrm = false;
+	if (e.keyCode == 65 || e.keyCode == 97) {
+		if (wrfrm == false)
+			wrfrm = true;
+		else
+			wrfrm = false;
     }
 
     if (e.keyCode == 38) // up arrow
     {
-				car.acceleration = 20;
+				car.acceleration = 10;
         moveForward = true;
     }
 
     if (e.keyCode == 40)//down arrow
     {
-				car.acceleration = -20;
+				car.acceleration = -10;
         moveBackward = true;
     }
 
@@ -175,45 +178,54 @@ function updateCar() {
 
     if (moveLeft == true) //left arrow
     {
-        car.rotation.z += delta * 45 * Math.PI / 180;
+        car.rotation.z += delta * 180 * Math.PI / 180;
     }
 
     if (moveRight == true) // right arrow
     {
-        car.rotation.z -= delta * 45 * Math.PI / 180;
+        car.rotation.z -= delta * 180 * Math.PI / 180;
     }
 
 		/* To Stop the car */
 		car.velocity -= car.velocity*delta;
 		car.translateX(car.velocity);
 
-    render();
+    //render();
 }
 
 function onResize(){
     'use strict';
 
-	renderer.setSize(window.innerWidth, window.innerHeight);
+	// camera.right = (renderer.getSize().width /2 ) / camera.aspect ;
+	// camera.left = (renderer.getSize().width  / -2) / camera.aspect;
+	// camera.top = (renderer.getSize().height  / 2) * camera.aspect;
+	// camera.bottom = (renderer.getSize().height  / -2) * camera.aspect;
 
-	var ratio = window.innerWidth / window.innerHeight;
+	// winHeight = camera.top - camera.bottom;
+	// winWidth = camera.right - camera.left;
+	//
+	// if ( 1.37 < window.innerWidth/innerHeight )
+	// { delta = ((63.6 * (window.innerWidth/innerHeight)) - 88.1) / 2;
+	// 	camera.left = -136.6-delta;
+	// 	camera.right = 136.6+delta;
+	// 	camera.top = 63.8 ;
+	// 	camera.bottom = -63.8;
+	// }
+	// else
+	// { delta = ((88.1 / (window.innerWidth/innerHeight)) - 63.6) / 2;
+	// 	camera.left = -136.6;
+	// 	camera.right = 136.6;
+	// 	camera.top = 63.8+delta ;
+	// 	camera.bottom = -63.8-delta;
+	// }
+	if (window.innerWidth != winWidth)
+		renderer.setSize(window.innerWidth, window.innerHeight*camera.aspect);
 
-	winHeight = camera.top - camera.bottom;
-	winWidth = camera.right - camera.left;
-
-	if ( 1.37 < window.innerWidth/innerHeight )
-	{ delta = ((63.6 * (window.innerWidth/innerHeight)) - 88.1) / 2;
-		camera.left = -136.6-delta;
-		camera.right = 136.6+delta;
-		camera.top = 63.8 ;
-		camera.bottom = -63.8;
-	}
 	else
-	{ delta = ((88.1 / (window.innerWidth/innerHeight)) - 63.6) / 2;
-		camera.left = -136.6;
-		camera.right = 136.6;
-		camera.top = 63.8+delta ;
-		camera.bottom = -63.8-delta;
-	}
+		renderer.setSize(window.innerWidth/camera.aspect, window.innerHeight)
+
+	camera.aspect = window.innerWidth / window.innerHeight;
+	winWidth = window.innerWidth;
 
 	camera.updateProjectionMatrix();
 
