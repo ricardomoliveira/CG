@@ -3,7 +3,16 @@
 /* Usar o keyUp /*
 
 /*global THREE*/
-var camera, scene, renderer;
+var camera = {
+	left: -1500,
+	right: 1500,
+	top: 1000,
+	bottom: -1000,
+	near: 0.1,
+	far: 100
+};
+
+var scene, renderer;
 
 var geometry, material, mesh, car;
 
@@ -78,7 +87,7 @@ function createScene() {
 
 function createCamera(){
     'use strict';
-    camera = new THREE.OrthographicCamera(-1500, 1500, 1000, -1000, 0.1, 100);
+    camera = new THREE.OrthographicCamera(camera.left, camera.right, camera.top, camera.bottom, camera.near, camera.far);
 
     camera.position.z=50;
     camera.lookAt(scene.position);
@@ -102,13 +111,13 @@ function onKeyDown(e) {
 
     if (e.keyCode == 38) // up arrow
     {
-				car.acceleration = 100;
+				car.acceleration = 20;
         moveForward = true;
     }
 
     if (e.keyCode == 40)//down arrow
     {
-				car.acceleration = -100;
+				car.acceleration = -20;
         moveBackward = true;
     }
 
@@ -127,11 +136,13 @@ function onKeyUp(e) {
 		if (e.keyCode == 38) // up arrow
     {
         moveForward = false;
+				car.acceleration = 0;
     }
 
     if (e.keyCode == 40)//down arrow
     {
         moveBackward = false;
+				car.acceleration = 0;
     }
 
     if (e.keyCode == 37) //left arrow
@@ -147,7 +158,6 @@ function onKeyUp(e) {
 
 function updateCar() {
     'use strict';
-    var add = 0;
 		var delta = clock.getDelta();
 
     if (moveForward == true) // up arrow
@@ -157,27 +167,26 @@ function updateCar() {
 				car.translateX(car.velocity+(0.5)*car.acceleration*delta*delta);
     }
 
-		if (moveForward == false) {
-			car.acceleration = 0;
-			car.velocity -= car.velocity*delta;
-			car.translateX(car.velocity);
-		}
-
     if (moveBackward == true)//down arrow
     {
-			car.velocity = car.acceleration*delta;
+			car.velocity += car.acceleration*delta;
+			car.velocity *= car.drag;
 			car.translateX(car.velocity+(0.5)*car.acceleration*delta*delta);
-	}
+		}
 
     if (moveLeft == true) //left arrow
     {
-        car.rotation.z += 0.05;
+        car.rotation.z += delta * 45 * Math.PI / 180;
     }
 
     if (moveRight == true) // right arrow
     {
-        car.rotation.z -= 0.05;
+        car.rotation.z -= delta * 45 * Math.PI / 180;
     }
+
+		/* To Stop the car */
+		car.velocity -= car.velocity*delta;
+		car.translateX(car.velocity);
 
     render();
 }
@@ -187,21 +196,25 @@ function onResize(){
 
 	renderer.setSize(window.innerWidth, window.innerHeight);
 
-	if ( window.innerWidth != winWidth ){
-		camera.right = window.innerWidth / 2;
-		camera.left = (window.innerWidth / -2);
-		camera.top = (window.innerWidth / 1.5) / 2;
-		camera.bottom = - (window.innerWidth / 1.5) / 2;
-	}
-	else if ( window.innerHeight != winHeight ){
-		camera.top = window.innerHeight / 2;
-		camera.bottom = - (window.innerHeight / 2);
-		camera.right = (window.innerHeight * 1.5) / 2;
-		camera.left = -((window.innerHeight * 1.5) / 2);
-	}
+	var ratio = window.innerWidth / window.innerHeight;
 
 	winHeight = camera.top - camera.bottom;
 	winWidth = camera.right - camera.left;
+
+	if ( 1.37 < window.innerWidth/innerHeight )
+	{ delta = ((63.6 * (window.innerWidth/innerHeight)) - 88.1) / 2;
+		camera.left = -136.6-delta;
+		camera.right = 136.6+delta;
+		camera.top = 63.8 ;
+		camera.bottom = -63.8;
+	}
+	else
+	{ delta = ((88.1 / (window.innerWidth/innerHeight)) - 63.6) / 2;
+		camera.left = -136.6;
+		camera.right = 136.6;
+		camera.top = 63.8+delta ;
+		camera.bottom = -63.8-delta;
+	}
 
 	camera.updateProjectionMatrix();
 
@@ -214,7 +227,7 @@ function createFloor(x, y, z) {
 
     material = new THREE.MeshBasicMaterial({ color: 0x009DE0, wireframe: false});
 
-    geometry = new THREE.CubeGeometry(1500, 1500, 1);
+    geometry = new THREE.CubeGeometry(2500, 1500, 1);
     mesh = new THREE.Mesh(geometry, material);
 
     table.add(mesh);
@@ -230,7 +243,7 @@ function createFloor(x, y, z) {
 function createPattern() {
   'use strict';
 
-  for (var i = -725; i < 750; i+=100) {
+  for (var i = -1225; i < 1225; i+=100) {
       for (var j = -725; j < 750; j+=50) {
           var cube = new THREE.Object3D();
           var material = new THREE.MeshBasicMaterial({ color: 0xFFFFFF});
