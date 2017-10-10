@@ -2,17 +2,20 @@
 /* Criar classes */
 /* Usar o keyUp /*
 /*global THREE*/
-var camera = {
-	left: -1500,
-	right: 1500,
-	top: 1000,
-	bottom: -1000,
-	near: 0.1,
-	far: 100,
-	aspect:1
-};
 
-var scene, renderer;
+// var camera = {
+// 	left: -1500,
+// 	right: 1500,
+// 	top: 1000,
+// 	bottom: -1000,
+// 	near: 0.1,
+// 	far: 100,
+// 	aspect:1.5
+// };
+
+var ratioMesa = 3/5;
+
+var scene, renderer, camera;
 
 var geometry, material, mesh, car;
 
@@ -38,9 +41,7 @@ function init(){
 
     renderer.setSize(window.innerWidth, window.innerHeight);
 
-	winWidth = window.innerWidth;
-
-	camera.aspect = renderer.getSize().width / renderer.getSize().height;
+	//winWidth = window.innerWidth;
 
     document.body.appendChild(renderer.domElement);
 
@@ -196,36 +197,24 @@ function updateCar() {
 function onResize(){
     'use strict';
 
-	// camera.right = (renderer.getSize().width /2 ) / camera.aspect ;
-	// camera.left = (renderer.getSize().width  / -2) / camera.aspect;
-	// camera.top = (renderer.getSize().height  / 2) * camera.aspect;
-	// camera.bottom = (renderer.getSize().height  / -2) * camera.aspect;
+	renderer.setSize(window.innerWidth, window.innerHeight);
 
-	// winHeight = camera.top - camera.bottom;
-	// winWidth = camera.right - camera.left;
-	//
-	// if ( 1.37 < window.innerWidth/innerHeight )
-	// { delta = ((63.6 * (window.innerWidth/innerHeight)) - 88.1) / 2;
-	// 	camera.left = -136.6-delta;
-	// 	camera.right = 136.6+delta;
-	// 	camera.top = 63.8 ;
-	// 	camera.bottom = -63.8;
-	// }
-	// else
-	// { delta = ((88.1 / (window.innerWidth/innerHeight)) - 63.6) / 2;
-	// 	camera.left = -136.6;
-	// 	camera.right = 136.6;
-	// 	camera.top = 63.8+delta ;
-	// 	camera.bottom = -63.8-delta;
-	// }
-	if (window.innerWidth != winWidth)
-		renderer.setSize(window.innerWidth, window.innerHeight*camera.aspect);
+	var ratioJanela = renderer.getSize().height /renderer.getSize().width;
 
-	else
-		renderer.setSize(window.innerWidth/camera.aspect, window.innerHeight)
+	if ((ratioJanela) >= ratioMesa) {
+		camera.right = 2500/4;
+		camera.left = -2500/4;
+		camera.top = (1500 * (ratioJanela)) / 4;
+		camera.bottom = (1500 * (ratioJanela)) / (-4);
 
-	camera.aspect = window.innerWidth / window.innerHeight;
-	winWidth = window.innerWidth;
+	}
+	else {
+		camera.top = 1500 / 4;
+		camera.bottom = -1500 /4;
+		camera.right = (2500 / ratioJanela) / 4;
+		camera.right = (2500 / ratioJanela) / -4;
+
+	}
 
 	camera.updateProjectionMatrix();
 
