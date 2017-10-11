@@ -166,36 +166,46 @@ function updateCar() {
 
     if (moveForward == true) // up arrow
     {
+        /* atualizacao do vetor velocidade eixo x*/
 		car.velocity += (car.acceleration*delta) * Math.cos(car.angle);
-        car.xpto += (car.acceleration*delta) * Math.sin(car.angle);
-
         car.velocity *= car.drag * Math.cos(car.angle);
-        car.xpto *= car.drag * Math.sin(car.angle);
-
         car.translateX(car.velocity +(0.5)*car.acceleration*delta*delta);
+
+        /* atualizacao do vetor velocidade eixo y*/
+        car.xpto += (car.acceleration*delta) * Math.sin(car.angle);
+        car.xpto *= car.drag * Math.sin(car.angle);
         car.translateY(car.xpto + (0.5)*car.acceleration*delta*delta);
+
     }
 
     if (moveBackward == true)//down arrow
     {
+        /* atualizacao do vetor velocidade eixo x*/
 		car.velocity += (car.acceleration*delta) * Math.cos(car.angle);
+        car.velocity *= car.drag * Math.cos(car.angle);
+        car.translateX(car.velocity + (0.5)*car.acceleration*delta*delta);
+
+        /* atualizacao do vetor velocidade eixo y*/
         car.xpto += (car.acceleration*delta) * Math.sin(car.angle);
-
-		car.velocity *= car.drag * Math.cos(car.angle);
         car.xpto *= car.drag * Math.sin(car.angle);
-
-		car.translateX(car.velocity + (0.5)*car.acceleration*delta*delta);
         car.translateY(car.xpto + (0.5) * car.acceleration*delta*delta);
+
+
     }
 
     if (moveLeft == true) //left arrow
     {
-        car.angle += (2*Math.PI) / 80;
+        /* atualizacao do angulo no sentido positivo*/
+        car.angle = 80 * delta * (Math.PI)/80;
+        car.rotation.z += car.angle;
+
     }
 
     if (moveRight == true) // right arrow
     {
-        car.angle -= (2*Math.PI) / 80;
+        /* atualizacao do angulo no sentido negativo*/
+        car.angle = 80*delta * Math.PI/80;
+        car.rotation.z -= car.angle;
     }
 
 	/* To Stop the car */
@@ -397,8 +407,8 @@ function createCar(x, y, z){
     cone.rotation.z+=Math.PI*1.5;
     car.add(cone);
 
-		car.velocity = 0;
-        car.xpto = 0;
+		car.velocity = 0; /*velocidade eixo x*/
+        car.xpto = 0; /*velocidade eixo x*/
 		car.acceleration = 10;
 		car.drag = 0.99;
         car.angle = 0;
