@@ -115,13 +115,13 @@ function onKeyDown(e) {
 
     if (e.keyCode == 38) // up arrow
     {
-				car.acceleration = 10;
+		car.acceleration = 10;
         moveForward = true;
     }
 
     if (e.keyCode == 40)//down arrow
     {
-				car.acceleration = -10;
+		car.acceleration = -10;
         moveBackward = true;
     }
 
@@ -137,16 +137,16 @@ function onKeyDown(e) {
 }
 
 function onKeyUp(e) {
-		if (e.keyCode == 38) // up arrow
+	if (e.keyCode == 38) // up arrow
     {
         moveForward = false;
-				car.acceleration = 0;
+		car.acceleration = 0;
     }
 
     if (e.keyCode == 40)//down arrow
     {
         moveBackward = false;
-				car.acceleration = 0;
+		car.acceleration = 0;
     }
 
     if (e.keyCode == 37) //left arrow
@@ -162,37 +162,48 @@ function onKeyUp(e) {
 
 function updateCar() {
     'use strict';
-		var delta = clock.getDelta();
+	var delta = clock.getDelta();
 
     if (moveForward == true) // up arrow
     {
-				car.velocity += car.acceleration*delta;
-				car.velocity *= car.drag;
-				car.translateX(car.velocity+(0.5)*car.acceleration*delta*delta);
+		car.velocity1 += (car.acceleration*delta) * Math.cos(car.angle);
+        car.velocity2+= (car.acceleration*delta) * Math.sin(car.angle);
+
+        car.velocity1 *= car.drag * Math.cos(car.angle);
+        car.velocity2 *= car.drag * Math.sin(car.angle);
+
+        car.translateX(car.velocity1 +(0.5)*car.acceleration*delta*delta);
+        car.translateY(car.velocity2 + (0.5)*car.acceleration*delta*delta);
     }
 
     if (moveBackward == true)//down arrow
     {
-			car.velocity += car.acceleration*delta;
-			car.velocity *= car.drag;
-			car.translateX(car.velocity+(0.5)*car.acceleration*delta*delta);
-		}
+		car.velocity1 += (car.acceleration*delta) * Math.cos(car.angle);
+        car.velocity2 += (car.acceleration*delta) * Math.sin(car.angle);
+
+		car.velocity1 *= car.drag * Math.cos(car.angle);
+        car.velocity2 *= car.drag * Math.sin(car.angle);
+
+		car.translateX(car.velocity1 + (0.5)*car.acceleration*delta*delta);
+        car.translateY(car.velocity2 + (0.5) * car.acceleration*delta*delta);
+    }
 
     if (moveLeft == true) //left arrow
     {
-        car.rotation.z += delta * 180 * Math.PI / 180;
+        car.angle += (2*Math.PI) / 80;
     }
 
     if (moveRight == true) // right arrow
     {
-        car.rotation.z -= delta * 180 * Math.PI / 180;
+        car.angle -= (2*Math.PI) / 80;
     }
 
-		/* To Stop the car */
-		car.velocity -= car.velocity*delta;
-		car.translateX(car.velocity);
+	/* To Stop the car */
+	car.velocity1 -= car.velocity*delta * Math.cos(car.angle);
+    car.velocity2 -= car.velocity*delta * Math.sin(car.angle);
+	car.translateX(car.velocity1);
+    car.translateY(car.velocity2);
 
-    //render();
 }
 
 function onResize(){
@@ -202,18 +213,18 @@ function onResize(){
 
 	var ratioJanela = renderer.getSize().height /renderer.getSize().width;
 
-	if ((ratioJanela) > ratioMesa) {
-		camera.right = 2500/2;
-		camera.left = -2500/2;
-		camera.top = (1500 * (ratioJanela))/ (ratioMesa*2);
-		camera.bottom = (-1500 * (ratioJanela)) / (ratioMesa*2);
+	if (ratioJanela > ratioMesa) { //
+		camera.right = 2500 / 2;
+		camera.left = -2500 / 2;
+		camera.top = (1500 * ratioJanela) / (ratioMesa * 2);
+		camera.bottom = (-1500 * ratioJanela) / (ratioMesa * 2);
 
 	}
 	else {
-        camera.right = (2500 / ratioJanela) / ((1/ratioMesa)*2);
-        camera.left = (-2500 / ratioJanela) / ((1/ratioMesa)*2);
+        camera.right = (2500 / ratioJanela) / ( (1 / ratioMesa) * 2);
+        camera.left = (-2500 / ratioJanela) / ( (1 / ratioMesa) * 2);
 		camera.top = 1500 / 2;
-		camera.bottom = -1500 /2;
+		camera.bottom = -1500 / 2;
 
 	}
 
@@ -387,8 +398,10 @@ function createCar(x, y, z){
     car.add(cone);
 
 		car.velocity = 0;
+        car.xpto = 0;
 		car.acceleration = 10;
 		car.drag = 0.99;
+        car.angle = 0;
 
     car.add(chassis);
 
