@@ -166,26 +166,26 @@ function updateCar() {
 
     if (moveForward == true) // up arrow
     {
-		car.velocity1 += (car.acceleration*delta) * Math.cos(car.angle);
-        car.velocity2+= (car.acceleration*delta) * Math.sin(car.angle);
+		car.velocity += (car.acceleration*delta) * Math.cos(car.angle);
+        car.xpto += (car.acceleration*delta) * Math.sin(car.angle);
 
-        car.velocity1 *= car.drag * Math.cos(car.angle);
-        car.velocity2 *= car.drag * Math.sin(car.angle);
+        car.velocity *= car.drag * Math.cos(car.angle);
+        car.xpto *= car.drag * Math.sin(car.angle);
 
-        car.translateX(car.velocity1 +(0.5)*car.acceleration*delta*delta);
-        car.translateY(car.velocity2 + (0.5)*car.acceleration*delta*delta);
+        car.translateX(car.velocity +(0.5)*car.acceleration*delta*delta);
+        car.translateY(car.xpto + (0.5)*car.acceleration*delta*delta);
     }
 
     if (moveBackward == true)//down arrow
     {
-		car.velocity1 += (car.acceleration*delta) * Math.cos(car.angle);
-        car.velocity2 += (car.acceleration*delta) * Math.sin(car.angle);
+		car.velocity += (car.acceleration*delta) * Math.cos(car.angle);
+        car.xpto += (car.acceleration*delta) * Math.sin(car.angle);
 
-		car.velocity1 *= car.drag * Math.cos(car.angle);
-        car.velocity2 *= car.drag * Math.sin(car.angle);
+		car.velocity *= car.drag * Math.cos(car.angle);
+        car.xpto *= car.drag * Math.sin(car.angle);
 
-		car.translateX(car.velocity1 + (0.5)*car.acceleration*delta*delta);
-        car.translateY(car.velocity2 + (0.5) * car.acceleration*delta*delta);
+		car.translateX(car.velocity + (0.5)*car.acceleration*delta*delta);
+        car.translateY(car.xpto + (0.5) * car.acceleration*delta*delta);
     }
 
     if (moveLeft == true) //left arrow
@@ -199,10 +199,10 @@ function updateCar() {
     }
 
 	/* To Stop the car */
-	car.velocity1 -= car.velocity*delta * Math.cos(car.angle);
-    car.velocity2 -= car.velocity*delta * Math.sin(car.angle);
-	car.translateX(car.velocity1);
-    car.translateY(car.velocity2);
+	car.velocity -= car.velocity*delta * Math.cos(car.angle);
+    car.velocity -= car.velocity*delta * Math.sin(car.angle);
+	car.translateX(car.velocity);
+    car.translateY(car.xpto);
 
 }
 
