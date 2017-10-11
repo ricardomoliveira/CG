@@ -3,51 +3,42 @@
 /* Usar o keyUp /*
 /*global THREE*/
 
-var camera = {
-	left: -1500,
-	right: 1500,
-	top: 1000,
-	bottom: -1000,
-	near: 0.1,
-	far: 100,
-	aspect:1.5
+var ratioMesa = 1500/2500; // Altura da mesa / Comprimento da mesa : assegura o rácio de aspeto desta
+
+var scene, renderer, camera, geometry, material, mesh, clock;
+
+var wrfrm = false; // Atributo de wireframe dos objetos
+
+var car = {
+		acceleration: 0,
+		vx: 0,
+		angle: 0,
+		vy: 0,
+		drag: 0
 };
 
-var ratioMesa = 3/5;
-
-var scene, renderer, camera;
-
-var geometry, material, mesh, car;
-
-var clock;
-
-var winWidth;
-
-var wrfrm = false;
-
-var moveForward = false;
-var moveBackward = false;
-var moveLeft = false;
-var moveRight = false;
-
-var move = THREE.Vector3(1, 1, 0);
+var move = {
+	forward: false,
+	backward: false,
+	left: false,
+	right: false
+};
 
 function init(){
     'use strict';
 
-	clock =  new THREE.Clock();
+		clock =  new THREE.Clock();
 
     renderer = new THREE.WebGLRenderer({ antialias: true });
 
     renderer.setSize(window.innerWidth, window.innerHeight);
-
-	//winWidth = window.innerWidth;
 
     document.body.appendChild(renderer.domElement);
 
     createScene();
     createCamera();
     createPattern();
+
     createOrange(100, -450);
     createOrange(-350, 50);
     createOrange(400, 500);
@@ -60,17 +51,15 @@ function init(){
 
     createCar(100, 50, 10);
 
-    //render();
-
-    window.addEventListener( 'resize', onResize);
-    window.addEventListener( 'keydown', onKeyDown, false );
-	window.addEventListener( 'keyup', onKeyUp, false );
+    window.addEventListener( 'resize', onResize); // Deteta os eventos de alteração de tamanho da janela
+    window.addEventListener( 'keydown', onKeyDown, false ); // Deteta os eventos de tecla a ser premida
+		window.addEventListener( 'keyup', onKeyUp, false ); // Deteta os eventos de libertacao de teclas
 }
 
 function animate() {
 
-    updateCar();
-	updateWire();
+    updateCar(); // Atualiza o movimento do carro
+		updateWire(); // Caso seja premida a tecla 'a' ou 'A', e atualizada a wireframe de todos os objetos
     render();
 
     requestAnimationFrame(animate);
@@ -83,17 +72,18 @@ function createScene() {
     scene.background = new THREE.Color(0xf0f0f0);
 
     createFloor(0, 0, 0);
-    createCircularTrack(350, 150, 300, 0, 1);
-    createCircularTrack(350, 150, -300, 0, -1);
+    createCircularTrack(350, 150, 300, 0, 1); // Cria a pista da esquerda
+    createCircularTrack(350, 150, -300, 0, -1); // Cria a pista da direita
 
 }
 
 function createCamera(){
-    'use strict';
-    //camera = new THREE.OrthographicCamera(camera.left, camera.right, camera.top, camera.bottom, camera.near, camera.far);
-	camera = new THREE.OrthographicCamera(-window.innerWidth, window.innerWidth, window.innerHeight, -window.innerHeight, 0.1, 100);
+		'use strict';
+
+		camera = new THREE.OrthographicCamera(-window.innerWidth, window.innerWidth, window.innerHeight, -window.innerHeight, 0.1, 100);
 
     camera.position.z=50;
+
     camera.lookAt(scene.position);
 
     scene.add(camera);
@@ -113,50 +103,46 @@ function onKeyDown(e) {
 			wrfrm = false;
     }
 
-    if (e.keyCode == 38) // up arrow
+    if (e.keyCode == 38) // Tecla Cima
     {
-		car.acceleration = 10;
-        moveForward = true;
+        move.forward = true;
     }
 
-    if (e.keyCode == 40)//down arrow
-    {
-		car.acceleration = -10;
-        moveBackward = true;
+    if (e.keyCode == 40) // Tecla Baixo
+     {
+        move.backward = true;
     }
 
-    if (e.keyCode == 37) //left arrow
+    if (e.keyCode == 37) // Tecla Esquerda
     {
-        moveLeft = true;
+        move.left = true;
     }
 
-    if (e.keyCode == 39) // right arrow
+    if (e.keyCode == 39) // Tecla Direita
     {
-        moveRight = true;
+        move.right = true;
     }
 }
 
 function onKeyUp(e) {
-	if (e.keyCode == 38) // up arrow
+	if (e.keyCode == 38) // Tecla Cima
     {
-        moveForward = false;
-		car.acceleration = 0;
+        move.forward = false;
     }
 
-    if (e.keyCode == 40)//down arrow
+    if (e.keyCode == 40) // Tecla Cima
     {
-        moveBackward = false;
-		car.acceleration = 0;
+        move.backward = false;
     }
 
-    if (e.keyCode == 37) //left arrow
+    if (e.keyCode == 37) // Tecla Esquerda
     {
-        moveLeft = false;
+        move.left = false;
     }
 
-    if (e.keyCode == 39) // right arrow
+    if (e.keyCode == 39) // Tecla Direita
     {
-        moveRight = false;
+        move.right = false;
     }
 }
 
@@ -164,75 +150,71 @@ function updateCar() {
     'use strict';
 	var delta = clock.getDelta();
 
-    if (moveForward == true) // up arrow
+    if (move.forward == true) // Tecla Cima
     {
-        /* atualizacao do vetor velocidade eixo x*/
-		car.velocity += (car.acceleration*delta) * Math.cos(car.angle);
-        car.velocity *= car.drag * Math.cos(car.angle);
-        car.translateX(car.velocity +(0.5)*car.acceleration*delta*delta);
+        /* Atualizacao do vetor velocidade eixo x*/
+				car.vx += (car.acceleration*delta) * Math.cos(car.angle);
+        car.vx *= car.drag * Math.cos(car.angle);
+        car.translateX(car.vx +(0.5)*car.acceleration*delta*delta);
 
-        /* atualizacao do vetor velocidade eixo y*/
-        car.xpto += (car.acceleration*delta) * Math.sin(car.angle);
-        car.xpto *= car.drag * Math.sin(car.angle);
-        car.translateY(car.xpto + (0.5)*car.acceleration*delta*delta);
-
+        /* Atualizacao do vetor velocidade eixo y*/
+        car.vy += (car.acceleration*delta) * Math.sin(car.angle);
+        car.vy *= car.drag * Math.sin(car.angle);
+        car.translateY(car.vy + (0.5)*car.acceleration*delta*delta);
     }
 
-    if (moveBackward == true)//down arrow
+    if (move.backward == true) // Tecla Baixo
     {
-        /* atualizacao do vetor velocidade eixo x*/
-		car.velocity += (car.acceleration*delta) * Math.cos(car.angle);
-        car.velocity *= car.drag * Math.cos(car.angle);
-        car.translateX(car.velocity + (0.5)*car.acceleration*delta*delta);
+        /* Atualizacao do vetor velocidade eixo x*/
+				car.vx += (-car.acceleration*delta) * Math.cos(car.angle);
+        car.vx *= car.drag * Math.cos(car.angle);
+        car.translateX(car.vx + (0.5)*car.acceleration*delta*delta);
 
-        /* atualizacao do vetor velocidade eixo y*/
-        car.xpto += (car.acceleration*delta) * Math.sin(car.angle);
-        car.xpto *= car.drag * Math.sin(car.angle);
-        car.translateY(car.xpto + (0.5) * car.acceleration*delta*delta);
-
-
+        /* Atualizacao do vetor velocidade eixo y*/
+        car.vy += (-car.acceleration*delta) * Math.sin(car.angle);
+        car.vy *= car.drag * Math.sin(car.angle);
+        car.translateY(car.vy + (0.5) * car.acceleration*delta*delta);
     }
 
-    if (moveLeft == true) //left arrow
+    if (move.left == true) // Tecla Esquerda
     {
-        /* atualizacao do angulo no sentido positivo*/
-        car.angle = 80 * delta * (Math.PI)/80;
+        /* Atualizacao do angulo no sentido positivo*/
+        car.angle = 180 * delta * (Math.PI)/180;
         car.rotation.z += car.angle;
-
     }
 
-    if (moveRight == true) // right arrow
+    if (move.right == true) // Tecla Direita
     {
-        /* atualizacao do angulo no sentido negativo*/
-        car.angle = 80*delta * Math.PI/80;
+        /* Atualizacao do angulo no sentido negativo*/
+        car.angle = 180*delta * Math.PI/180;
         car.rotation.z -= car.angle;
     }
 
-	/* To Stop the car */
-	car.velocity -= car.velocity*delta * Math.cos(car.angle);
-    car.velocity -= car.velocity*delta * Math.sin(car.angle);
-	car.translateX(car.velocity);
-    car.translateY(car.xpto);
+	/*  Para parar o carro de acordo com as leis de movimento implementadas */
+		car.vx -= car.vx*delta * Math.cos(car.angle);
+    car.vx -= car.vx*delta * Math.sin(car.angle);
+		car.translateX(car.vx);
+    car.translateY(car.vy);
 
-}
+		}
 
 function onResize(){
     'use strict';
 
 	renderer.setSize(window.innerWidth, window.innerHeight);
 
-	var ratioJanela = renderer.getSize().height /renderer.getSize().width;
+	var ratioJanela = renderer.getSize().height /renderer.getSize().width; // Altura da janela / Comprimento da janela : assegura o rácio da janela
 
-	if (ratioJanela > ratioMesa) { //
+	if (ratioJanela > ratioMesa) { // Atualizamos as medidas da mesa para o caso de o resize estar a ser vertical
 		camera.right = 2500 / 2;
 		camera.left = -2500 / 2;
-		camera.top = (1500 * ratioJanela) / (ratioMesa * 2);
-		camera.bottom = (-1500 * ratioJanela) / (ratioMesa * 2);
+		camera.top = (1500 * ratioJanela) / (ratioMesa * 2); // Assegurar uma altura máxima aceitável
+		camera.bottom = (-1500 * ratioJanela) / (ratioMesa * 2); // Assegurar uma altura minima aceitável
 
 	}
-	else {
-        camera.right = (2500 / ratioJanela) / ( (1 / ratioMesa) * 2);
-        camera.left = (-2500 / ratioJanela) / ( (1 / ratioMesa) * 2);
+	else { // Atualizamos as medidas da mesa para o caso de o resize estar a ser horizontal
+    camera.right = (2500 / ratioJanela) / ( (1 / ratioMesa) * 2);
+    camera.left = (-2500 / ratioJanela) / ( (1 / ratioMesa) * 2);
 		camera.top = 1500 / 2;
 		camera.bottom = -1500 / 2;
 
@@ -265,7 +247,7 @@ function createFloor(x, y, z) {
 function createPattern() {
   'use strict';
 
-  for (var i = -1225; i < 1225; i+=100) {
+  for (var i = -1225; i < 1225; i+=100) { // Como o tamanho de cada objeto é 50, o seu centro fica a 25. Como tal, para ter uma mesa coberta totalmente, a primeira e ultima permitem que a fila de objetos não saia do plano da mesa.
       for (var j = -725; j < 750; j+=50) {
           var cube = new THREE.Object3D();
           var material = new THREE.MeshBasicMaterial({ color: 0xFFFFFF});
@@ -326,16 +308,12 @@ function createCheerioCircle(radius, x, y, flag1, flag2){
 }
 
 function createOrange(x,y) {
+  'use strict';
 
-    'use strict';
-
-  var orange = new THREE.Object3D();
-  var geometry = new THREE.SphereGeometry(40, 32, 22);
-  var material = new THREE.MeshBasicMaterial( { color: 0xFFA500, wireframe: false});
-  var mesh = new THREE.Mesh( geometry, material );
-  mesh.position.set(x,y,0);
-
-  orange.add(mesh);
+  geometry = new THREE.SphereGeometry(40, 32, 22);
+  material = new THREE.MeshBasicMaterial( { color: 0xFFA500, wireframe: false});
+  var orange = new THREE.Mesh( geometry, material );
+  orange.position.set(x,y,0);
 
   scene.add(orange);
 }
@@ -344,13 +322,11 @@ function createOrange(x,y) {
 function createButter(x,y) {
   'use strict';
 
-  var butter = new THREE.Object3D();
   geometry = new THREE.BoxGeometry(80, 50, 50);
   material = new THREE.MeshBasicMaterial( {color: 0xFFFF80, wireframe: false} );
-  mesh = new THREE.Mesh(geometry, material);
-  mesh.position.set(x,y,0);
+  var butter = new THREE.Mesh(geometry, material);
 
-  butter.add(mesh);
+	butter.position.set(x,y,0);
 
   scene.add(butter);
 }
@@ -376,8 +352,7 @@ function addTop(car, x, y, z){
 
     geometry = new THREE.BoxGeometry(x, y, z);
     material = new THREE.MeshBasicMaterial( {color: 0xff2800, wireframe: false} );
-    var top = new THREE.Mesh(geometry, material);
-    // adicionar ao chassis um top
+    var top = new THREE.Mesh(geometry, material); // Adiciona ao chassis uma parte de cima
 
     car.add(top);
 }
@@ -385,9 +360,16 @@ function addTop(car, x, y, z){
 function createCar(x, y, z){
     'use strict'
 
-    var chassis, top, acceleration, velocity;
+    var chassis, top, acceleration;
 
     chassis = new THREE.Object3D();
+		car =	new THREE.Object3D();
+
+		car.vx = 0; /* Velocidade eixo x */
+		car.vy = 0; /* Velocidade eixo y */
+		car.acceleration = 10; /* Aceleração pré-definida do carro */
+		car.drag = 0.99; /* Atrito entre o carro e a pista */
+		car.angle = 0; /* Ângulo de direção do carro */
 
     var geometry = new THREE.ConeGeometry( 15, 25, 32 );
     var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
@@ -398,20 +380,12 @@ function createCar(x, y, z){
     createWheel(chassis, x/2 - 10, -y/2, 1);
     createWheel(chassis, -x/2 + 10, -y/2, 1);
 
-    car = new THREE.Object3D();
-
     addTop(car, x, y, z);
     cone.position.x=x/20;
     cone.position.y=y/25;
     cone.position.z=15;
     cone.rotation.z+=Math.PI*1.5;
     car.add(cone);
-
-		car.velocity = 0; /*velocidade eixo x*/
-        car.xpto = 0; /*velocidade eixo x*/
-		car.acceleration = 10;
-		car.drag = 0.99;
-        car.angle = 0;
 
     car.add(chassis);
 
