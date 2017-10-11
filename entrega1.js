@@ -3,15 +3,15 @@
 /* Usar o keyUp /*
 /*global THREE*/
 
-// var camera = {
-// 	left: -1500,
-// 	right: 1500,
-// 	top: 1000,
-// 	bottom: -1000,
-// 	near: 0.1,
-// 	far: 100,
-// 	aspect:1.5
-// };
+var camera = {
+	left: -1500,
+	right: 1500,
+	top: 1000,
+	bottom: -1000,
+	near: 0.1,
+	far: 100,
+	aspect:1.5
+};
 
 var ratioMesa = 3/5;
 
@@ -201,18 +201,18 @@ function onResize(){
 
 	var ratioJanela = renderer.getSize().height /renderer.getSize().width;
 
-	if ((ratioJanela) >= ratioMesa) {
-		camera.right = 2500/4;
-		camera.left = -2500/4;
-		camera.top = (1500 * (ratioJanela)) / 4;
-		camera.bottom = (1500 * (ratioJanela)) / (-4);
+	if ((ratioJanela) > ratioMesa) {
+		camera.right = 2500/2;
+		camera.left = -2500/2;
+		camera.top = (1500 * (ratioJanela))/ (ratioMesa*2);
+		camera.bottom = (-1500 * (ratioJanela)) / (ratioMesa*2);
 
 	}
 	else {
-		camera.top = 1500 / 4;
-		camera.bottom = -1500 /4;
-		camera.right = (2500 / ratioJanela) / 4;
-		camera.right = (2500 / ratioJanela) / -4;
+        camera.right = (2500 / ratioJanela) / ((1/ratioMesa)*2);
+        camera.left = (-2500 / ratioJanela) / ((1/ratioMesa)*2);
+		camera.top = 1500 / 2;
+		camera.bottom = -1500 /2;
 
 	}
 
