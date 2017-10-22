@@ -1,15 +1,13 @@
-/* Esclarecer a questão do "Far" da camera e da profundidade do cubo */
-/* Criar classes */
-/* Usar o keyUp /*
-/*global THREE*/
+/* global THREE */
+
+var scene, renderer, camera, geometry, material, mesh, clock, table;
 
 var ratioMesa = 1500/2500; // Altura da mesa / Comprimento da mesa : assegura o rácio de aspeto desta
-
-var scene, renderer, camera, geometry, material, mesh, clock;
 
 var wrfrm = false; // Atributo de wireframe dos objetos
 
 var car = {
+		category: "car",
 		acceleration: 0,
 		vx: 0,
 		angle: 0,
@@ -24,7 +22,7 @@ var move = {
 	right: false
 };
 
-function init(){
+function init() {
     'use strict';
 
 		clock =  new THREE.Clock();
@@ -49,7 +47,7 @@ function init(){
     createButter(650, -450);
     createButter(-600, -350);
 
-    createCar(100, 50, 10);
+    createCar(50, 25, 5);
 
     window.addEventListener( 'resize', onResize); // Deteta os eventos de alteração de tamanho da janela
     window.addEventListener( 'keydown', onKeyDown, false ); // Deteta os eventos de tecla a ser premida
@@ -58,9 +56,9 @@ function init(){
 
 function animate() {
 
-    updateCar(); // Atualiza o movimento do carro
-		updateWire(); // Caso seja premida a tecla 'a' ou 'A', e atualizada a wireframe de todos os objetos
-    render();
+    // updateCar(); // Atualiza o movimento do carro
+		update(); // Caso seja premida a tecla 'a' ou 'A', e atualizada a wireframe de todos os objetos
+    render(); // Coloca os objetos em cena em exposição
 
     requestAnimationFrame(animate);
 }
@@ -80,7 +78,7 @@ function createScene() {
 function createCamera(){
 		'use strict';
 
-		camera = new THREE.OrthographicCamera(-window.innerWidth, window.innerWidth, window.innerHeight, -window.innerHeight, 0.1, 100);
+		camera = new THREE.OrthographicCamera(-window.innerWidth, window.innerWidth, window.innerHeight, -window.innerHeight, 0.1, 51);
 
     camera.position.z=50;
 
@@ -89,11 +87,10 @@ function createCamera(){
     scene.add(camera);
 }
 
-function render(){
+function render() {
     'use strict';
     renderer.render(scene, camera);
 }
-
 
 function onKeyDown(e) {
 	if (e.keyCode == 65 || e.keyCode == 97) {
@@ -146,73 +143,21 @@ function onKeyUp(e) {
     }
 }
 
-function updateCar() {
-    'use strict';
-	var delta = clock.getDelta();
-
-    if (move.forward == true) // Tecla Cima
-    {
-        /* Atualizacao do vetor velocidade eixo x*/
-				car.vx += (car.acceleration*delta) * Math.cos(car.angle);
-        car.vx *= car.drag * Math.cos(car.angle);
-        car.translateX(car.vx +(0.5)*car.acceleration*delta*delta);
-
-        /* Atualizacao do vetor velocidade eixo y*/
-        car.vy += (car.acceleration*delta) * Math.sin(car.angle);
-        car.vy *= car.drag * Math.sin(car.angle);
-        car.translateY(car.vy + (0.5)*car.acceleration*delta*delta);
-    }
-
-    if (move.backward == true) // Tecla Baixo
-    {
-        /* Atualizacao do vetor velocidade eixo x*/
-				car.vx += (-car.acceleration*delta) * Math.cos(car.angle);
-        car.vx *= car.drag * Math.cos(car.angle);
-        car.translateX(car.vx + (0.5)*car.acceleration*delta*delta);
-
-        /* Atualizacao do vetor velocidade eixo y*/
-        car.vy += (-car.acceleration*delta) * Math.sin(car.angle);
-        car.vy *= car.drag * Math.sin(car.angle);
-        car.translateY(car.vy + (0.5) * car.acceleration*delta*delta);
-    }
-
-    if (move.left == true) // Tecla Esquerda
-    {
-        /* Atualizacao do angulo no sentido positivo*/
-        car.angle = 180 * delta * (Math.PI)/180;
-        car.rotation.z += car.angle;
-    }
-
-    if (move.right == true) // Tecla Direita
-    {
-        /* Atualizacao do angulo no sentido negativo*/
-        car.angle = 180*delta * Math.PI/180;
-        car.rotation.z -= car.angle;
-    }
-
-	/*  Para parar o carro de acordo com as leis de movimento implementadas */
-		car.vx -= car.vx*delta * Math.cos(car.angle);
-    car.vx -= car.vx*delta * Math.sin(car.angle);
-		car.translateX(car.vx);
-    car.translateY(car.vy);
-
-		}
-
 function onResize(){
-    'use strict';
+  'use strict';
 
 	renderer.setSize(window.innerWidth, window.innerHeight);
 
 	var ratioJanela = renderer.getSize().height /renderer.getSize().width; // Altura da janela / Comprimento da janela : assegura o rácio da janela
 
-	if (ratioJanela > ratioMesa) { // Atualizamos as medidas da mesa para o caso de o resize estar a ser vertical
+	if (ratioJanela > ratioMesa) { // Atualizamos as medidas da mesa para o resize vertical
 		camera.right = 2500 / 2;
 		camera.left = -2500 / 2;
 		camera.top = (1500 * ratioJanela) / (ratioMesa * 2); // Assegurar uma altura máxima aceitável
 		camera.bottom = (-1500 * ratioJanela) / (ratioMesa * 2); // Assegurar uma altura minima aceitável
 
 	}
-	else { // Atualizamos as medidas da mesa para o caso de o resize estar a ser horizontal
+	else { // Atualizamos as medidas da mesa para o resize horizontal
     camera.right = (2500 / ratioJanela) / ( (1 / ratioMesa) * 2);
     camera.left = (-2500 / ratioJanela) / ( (1 / ratioMesa) * 2);
 		camera.top = 1500 / 2;
@@ -227,14 +172,11 @@ function onResize(){
 function createFloor(x, y, z) {
     'use strict';
 
-    var table = new THREE.Object3D();
-
     material = new THREE.MeshBasicMaterial({ color: 0x009DE0, wireframe: false});
 
     geometry = new THREE.CubeGeometry(2500, 1500, 1);
-    mesh = new THREE.Mesh(geometry, material);
 
-    table.add(mesh);
+    table = new THREE.Mesh(geometry, material);
 
     table.position.x = x;
     table.position.y = y;
@@ -276,7 +218,6 @@ function createCheerio(x, y){
     scene.add(torus);
 }
 
-
 function createCircularTrack(r1, r2, x, y, flag){
     'use strict';
 
@@ -294,7 +235,7 @@ function createCheerioCircle(radius, x, y, flag1, flag2){
                     createCheerio(Math.cos(i * (Math.PI/180))*radius + x, Math.sin(i* (Math.PI/180))*radius + y);
                 }
         else { // circulo da esquerda
-            for (var i = 0; i<360; i+=5){
+            for (var i = 0; i<360; i+=6){
                 if (i>30 && i<340)
                     createCheerio(Math.cos(i * (Math.PI/180))*radius + x, Math.sin(i* (Math.PI/180))*radius + y);
             }
@@ -310,14 +251,27 @@ function createCheerioCircle(radius, x, y, flag1, flag2){
 function createOrange(x,y) {
   'use strict';
 
-  geometry = new THREE.SphereGeometry(40, 32, 22);
+	var orange = new THREE.Object3D();
+  geometry = new THREE.SphereGeometry(30, 32, 22);
   material = new THREE.MeshBasicMaterial( { color: 0xFFA500, wireframe: false});
-  var orange = new THREE.Mesh( geometry, material );
+  mesh = new THREE.Mesh( geometry, material );
+
+	orange.add(mesh);
+
+	geometry = new THREE.BoxGeometry(10, 10, 2);
+  material = new THREE.MeshBasicMaterial({ color: 0x008000, wireframe: false});
+  var leaf = new THREE.Mesh( geometry, material );
+
+	leaf.position.z = 30;
+	orange.add(leaf);
+
   orange.position.set(x,y,0);
+	orange.category = "orange";
+	orange.acceleration = Math.floor(Math.random() * 3) + 1;
+	orange.vx = 0;
 
   scene.add(orange);
 }
-
 
 function createButter(x,y) {
   'use strict';
@@ -334,7 +288,7 @@ function createButter(x,y) {
 function createWheel(obj, x, y, z){
     'use strict';
 
-    geometry = new THREE.TorusBufferGeometry(12, 4, 16, 100);
+    geometry = new THREE.TorusBufferGeometry(6, 2, 8, 100);
     material = new THREE.MeshBasicMaterial({color: 0x000000, wireframe: false} );
     var torus = new THREE.Mesh(geometry, material);
 
@@ -352,9 +306,9 @@ function addTop(car, x, y, z){
 
     geometry = new THREE.BoxGeometry(x, y, z);
     material = new THREE.MeshBasicMaterial( {color: 0xff2800, wireframe: false} );
-    var top = new THREE.Mesh(geometry, material); // Adiciona ao chassis uma parte de cima
+    var top = new THREE.Mesh(geometry, material);
 
-    car.add(top);
+    car.add(top); // Adiciona ao carro uma parte de cima
 }
 
 function createCar(x, y, z){
@@ -370,6 +324,8 @@ function createCar(x, y, z){
 		car.acceleration = 10; /* Aceleração pré-definida do carro */
 		car.drag = 0.99; /* Atrito entre o carro e a pista */
 		car.angle = 0; /* Ângulo de direção do carro */
+		car.category = "car";
+
 
     var geometry = new THREE.ConeGeometry( 15, 25, 32 );
     var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
@@ -381,24 +337,114 @@ function createCar(x, y, z){
     createWheel(chassis, -x/2 + 10, -y/2, 1);
 
     addTop(car, x, y, z);
+
+		/* To-do
     cone.position.x=x/20;
     cone.position.y=y/25;
-    cone.position.z=15;
+    cone.position.z=17;
     cone.rotation.z+=Math.PI*1.5;
     car.add(cone);
 
+		*/
+
     car.add(chassis);
 
-    car.position.set(100, 200, 2);
+    car.translateX(100);
+		car.translateY(200);
     scene.add(car);
 
 }
 
-function updateWire(){
+function update()
+{
+
+	var delta = clock.getDelta();
 
 	scene.traverse(function(node) {
 		if (node instanceof THREE.Mesh) {
 			node.material.wireframe = wrfrm;
 		}
+		if(node instanceof THREE.Object3D && node!=null){
+			position(node);
+			movement(node, delta);
+		}
 	});
+
+function movement(object,time) {
+	'use strict';
+
+	if(object.category == "car")
+	{
+
+		if (move.forward == true) // Tecla Cima
+		{
+			 	object.drag = 1;
+			 	/* Atualizacao do vetor velocidade eixo x*/
+			 	object.vx += (object.acceleration*time) * Math.cos(object.angle);
+				object.vx *= object.drag * Math.cos(object.angle);
+				object.translateX(object.vx +(0.5)*object.acceleration*time*time);
+
+				/* Atualizacao do vetor velocidade eixo y*/
+				object.vy += (object.acceleration*time) * Math.sin(object.angle);
+				object.vy *= object.drag * Math.sin(object.angle);
+				object.translateY(object.vy + (0.5)*object.acceleration*time*time);
+		}
+
+		if (move.backward == true) // Tecla Baixo
+		{
+				/* Atualizacao do vetor velocidade eixo x*/
+			 	object.vx += (-object.acceleration*time) * Math.cos(object.angle);
+			 	object.vx *= object.drag * Math.cos(object.angle);
+				object.translateX(object.vx + (0.5)*object.acceleration*time*time);
+
+				/* Atualizacao do vetor velocidade eixo y*/
+				object.vy += (-object.acceleration*time) * Math.sin(object.angle);
+			 	object.vy *= object.drag * Math.sin(object.angle);
+				object.translateY(object.vy + (0.5) * object.acceleration*time*time);
+		}
+
+		if (move.left == true) // Tecla Esquerda
+		{
+				/* Atualizacao do angulo no sentido positivo*/
+				object.angle = 180 * time * (Math.PI)/180;
+				object.rotation.z += object.angle;
+		}
+
+		if (move.right == true) // Tecla Direita
+		{
+				/* Atualizacao do angulo no sentido negativo*/
+				object.angle = 180 * time * Math.PI/180;
+				object.rotation.z -= object.angle;
+		}
+
+ /*  Para parar o carro de acordo com as leis de movimento implementadas */
+	 	object.vx -= object.vx*time * Math.cos(object.angle);
+		object.vx -= object.vx*time * Math.sin(object.angle);
+	 	object.translateX(object.vx);
+		object.translateY(object.vy);
+	 }
+
+	 if (object.category == "orange") {
+		 /* Atualizacao do vetor velocidade eixo x*/
+		 object.vx += (object.acceleration*time);
+		 object.translateX(object.vx +(0.5)*object.acceleration*time*time);
+		 object.rotation.x += 5*time;
+		 }
+}
+
+function position(object) {
+	if (object.category == "orange") {
+		if (object.position.x >= 1250) {
+			object.visible = false; // Remove laranja de cena
+		}
+		if (object.position.x >= 2500) {
+			object.vx = 0;
+			object.position.x = Math.floor(Math.random() * 1200) - 1200 ;
+			object.position.y = Math.floor(Math.random() * 700) - 700 ;
+
+			object.visible = true;
+		}
+	}
+}
+
 }
