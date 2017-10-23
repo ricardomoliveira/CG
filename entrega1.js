@@ -248,6 +248,10 @@ function createCheerio(x, y){
     torus.position.y = y;
     torus.position.z = 1;
 
+	torus.vx = 0;
+	torus.vy = 0;
+	torus.acceleration = 3;
+
     scene.add(torus);
 }
 
@@ -285,21 +289,20 @@ function createOrange(x,y) {
   'use strict';
 
 	var orange = new THREE.Object3D();
-  geometry = new THREE.SphereGeometry(30, 50, 50);
-  material = new THREE.MeshBasicMaterial( { color: 0xFFA500, wireframe: false});
-  mesh = new THREE.Mesh( geometry, material );
+  	geometry = new THREE.SphereGeometry(30, 32, 22);
+  	material = new THREE.MeshBasicMaterial( { color: 0xFFA500, wireframe: false});
+  	mesh = new THREE.Mesh( geometry, material );
 
 	orange.add(mesh);
 
 	geometry = new THREE.BoxGeometry(10, 10, 2);
-  material = new THREE.MeshBasicMaterial({ color: 0x008000, wireframe: false});
-  var leaf = new THREE.Mesh( geometry, material );
+  	material = new THREE.MeshBasicMaterial({ color: 0x008000, wireframe: false});
+  	var leaf = new THREE.Mesh( geometry, material );
 
 	leaf.position.z = 30;
 	orange.add(leaf);
 
-  orange.position.set(x, y, 0);
-	orange.translateZ(15);
+  	orange.position.set(x,y,0);
 	orange.category = "orange";
 	orange.acceleration = Math.floor(Math.random() * 3) + 1;
 	orange.vx = 0;
@@ -315,6 +318,7 @@ function createButter(x,y) {
   var butter = new THREE.Mesh(geometry, material);
 
 	butter.position.set(x,y,0);
+	butter.category = "butter";
 
   scene.add(butter);
 }
@@ -390,7 +394,6 @@ function createCar(x, y, z){
 
 function update()
 {
-
 	var delta = clock.getDelta();
 
 	scene.traverse(function(node) {
@@ -400,6 +403,7 @@ function update()
 		if(node instanceof THREE.Object3D && node!=null){
 			position(node);
 			movement(node, delta);
+			collision(node);
 		}
 	});
 
@@ -486,4 +490,60 @@ function position(object) {
 	}
 }
 
+function collision(object){
+	aabb1 = new THREE.Box3().setFromObject(object);
+	var difX;
+	var difY;
+	if (object.category == "car"){
+		scene.traverse(function(node) {
+			aabb2 = new THREE.Box3().setFromObject(node);
+			if (object != node){
+				if (node.category == "butter"){
+					if (aabb1.intersectsBox(aabb2)){
+						move.forward = false;
+					}
+					aabb2.makeEmpty();
+				}
+				if (node.category == "orange"){
+					if (aabb1.intersectsBox(aabb2)){
+						car.position.set(1000, 10, 10);
+						move.forward = false;
+
+					}
+					aabb2.makeEmpty();
+				}
+				if (node.category == "cheerio"){
+					if (aabb1.intersectsBox(aabb2)){
+						difX = (node.x - object.x);
+						difY = (node.y - object.y);
+
+					}
+					aabb2.makeEmpty();
+				}
+			}
+		});
+	}
+	// if (object.category == "cheerio"){
+	// 	scene.traverse(function(node) {
+	// 		aabb2 = new THREE.Box3().setFromObject(node);
+	// 		if (object != node && node.category == "cheerio"){
+	// 			if (aabb1.intersectsBox(aabb2)){
+	// 				if (node.vx == 0 && node.y == 0){ // o node está parado e o object esta a andar
+	// 					difX = (node.x - object.x);
+	// 					difY = (node.y - object.y);
+	//
+	// 				}
+	// 				else if (object.vx && object.vy == 0){ // o object esta parado e o node esta a andar
+	// 					difX = (object.x - node.x);
+	// 					difY = (object.y - node.y);
+	// 				}
+	//
+	//
+	// 			}
+	// 		}
+	// 	}
+	// });
+	aabb1.makeEmpty();
+
+}
 }
