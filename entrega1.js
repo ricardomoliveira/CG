@@ -1,6 +1,6 @@
 /* global THREE */
 
-var scene, renderer, camera, geometry, material, mesh, clock, table;
+var scene, renderer, activeCamera, OrthoCamera, ChaseCamera, BackCamera, geometry, material, mesh, clock, table;
 
 var ratioMesa = 1500/2500; // Altura da mesa / Comprimento da mesa : assegura o rácio de aspeto desta
 
@@ -26,7 +26,7 @@ function init() {
     'use strict';
 
 		clock =  new THREE.Clock();
-
+		activeCamera=3;
     renderer = new THREE.WebGLRenderer({ antialias: true });
 
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -35,7 +35,7 @@ function init() {
 
     createScene();
     createCamera();
-    createPattern();
+//    createPattern();
 
     createOrange(100, -450);
     createOrange(-350, 50);
@@ -47,11 +47,12 @@ function init() {
     createButter(650, -450);
     createButter(-600, -350);
 
-    createCar(50, 25, 5);
+    createCar(30, 15, 7);
 
     window.addEventListener( 'resize', onResize); // Deteta os eventos de alteração de tamanho da janela
     window.addEventListener( 'keydown', onKeyDown, false ); // Deteta os eventos de tecla a ser premida
 		window.addEventListener( 'keyup', onKeyUp, false ); // Deteta os eventos de libertacao de teclas
+		window.addEventListener("keypress", onKeyPressed);
 }
 
 function animate() {
@@ -78,18 +79,35 @@ function createScene() {
 function createCamera(){
 		'use strict';
 
-		camera = new THREE.OrthographicCamera(-window.innerWidth, window.innerWidth, window.innerHeight, -window.innerHeight, 0.1, 51);
 
-    camera.position.z=50;
+		ChaseCamera= new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+		BackCamera= new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+		OrthoCamera = new THREE.OrthographicCamera(-window.innerWidth, window.innerWidth, window.innerHeight, -window.innerHeight, 0.1, 51);
 
-    camera.lookAt(scene.position);
+		BackCamera.position.x = 0;
+		BackCamera.position.y = -500;
+		BackCamera.position.z = 250;
+		BackCamera.rotation.x = 0.8;
 
-    scene.add(camera);
+		ChaseCamera.position.x = -100;
+		ChaseCamera.position.y = 0;
+		ChaseCamera.position.z = 100;
+		ChaseCamera.rotation.y = -1;
+
+		ChaseCamera.rotation.z = -90 * Math.PI / 180;
+
+
+		OrthoCamera.position.z=30;
+
 }
 
 function render() {
     'use strict';
-    renderer.render(scene, camera);
+
+		if(activeCamera==1){renderer.render(scene,OrthoCamera);}
+		if(activeCamera==2){renderer.render(scene,BackCamera);}
+		if(activeCamera==3){renderer.render(scene,ChaseCamera);}
+
 }
 
 function onKeyDown(e) {
@@ -119,6 +137,21 @@ function onKeyDown(e) {
     {
         move.right = true;
     }
+
+}
+
+function onKeyPressed(e) {
+	if (e.keyCode == 49) {
+			activeCamera = 1;
+	}
+
+	if (e.keyCode == 50) {
+		activeCamera == 2;
+	}
+
+	if (e.keyCode == 51) {
+		activeCamera == 3;
+	}
 }
 
 function onKeyUp(e) {
@@ -142,6 +175,7 @@ function onKeyUp(e) {
         move.right = false;
     }
 }
+
 
 function onResize(){
   'use strict';
@@ -172,7 +206,7 @@ function onResize(){
 function createFloor(x, y, z) {
     'use strict';
 
-    material = new THREE.MeshBasicMaterial({ color: 0x009DE0, wireframe: false});
+    material = new THREE.MeshBasicMaterial({ color: 0x696969, wireframe: false});
 
     geometry = new THREE.CubeGeometry(2500, 1500, 1);
 
@@ -186,6 +220,7 @@ function createFloor(x, y, z) {
 
 }
 
+/*
 function createPattern() {
   'use strict';
 
@@ -204,6 +239,7 @@ function createPattern() {
     }
   }
 }
+*/
 
 function createCheerio(x, y){
     'use strict';
@@ -288,7 +324,7 @@ function createButter(x,y) {
 function createWheel(obj, x, y, z){
     'use strict';
 
-    geometry = new THREE.TorusBufferGeometry(6, 2, 8, 100);
+    geometry = new THREE.TorusBufferGeometry(2, 2, 8, 100);
     material = new THREE.MeshBasicMaterial({color: 0x000000, wireframe: false} );
     var torus = new THREE.Mesh(geometry, material);
 
@@ -308,6 +344,7 @@ function addTop(car, x, y, z){
     material = new THREE.MeshBasicMaterial( {color: 0xff2800, wireframe: false} );
     var top = new THREE.Mesh(geometry, material);
 
+		top.position.z = 2;
     car.add(top); // Adiciona ao carro uma parte de cima
 }
 
@@ -326,15 +363,10 @@ function createCar(x, y, z){
 		car.angle = 0; /* Ângulo de direção do carro */
 		car.category = "car";
 
-
-    var geometry = new THREE.ConeGeometry( 15, 25, 32 );
-    var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-    var cone = new THREE.Mesh( geometry, material );
-
-    createWheel(chassis, -x/2 + 10, y/2, 1);
-    createWheel(chassis, x/2 - 10, y/2, 1);
-    createWheel(chassis, x/2 - 10, -y/2, 1);
-    createWheel(chassis, -x/2 + 10, -y/2, 1);
+    createWheel(chassis, -x/2 + 5, y/2, 1);
+    createWheel(chassis, x/2 - 5, y/2, 1);
+    createWheel(chassis, x/2 - 5, -y/2, 1);
+    createWheel(chassis, -x/2 + 5, -y/2, 1);
 
     addTop(car, x, y, z);
 
@@ -347,11 +379,14 @@ function createCar(x, y, z){
 
 		*/
 
+		car.add( ChaseCamera );
+
     car.add(chassis);
 
-    car.translateX(100);
-		car.translateY(200);
-    scene.add(car);
+		car.position.z = 7;
+
+		scene.add(car);
+
 
 }
 
@@ -388,8 +423,9 @@ function movement(object,time) {
 				object.vy += (object.acceleration*time) * Math.sin(object.angle);
 				object.vy *= object.drag * Math.sin(object.angle);
 				object.translateY(object.vy + (0.5)*object.acceleration*time*time);
-		}
 
+
+			}
 		if (move.backward == true) // Tecla Baixo
 		{
 				/* Atualizacao do vetor velocidade eixo x*/
@@ -401,6 +437,7 @@ function movement(object,time) {
 				object.vy += (-object.acceleration*time) * Math.sin(object.angle);
 			 	object.vy *= object.drag * Math.sin(object.angle);
 				object.translateY(object.vy + (0.5) * object.acceleration*time*time);
+
 		}
 
 		if (move.left == true) // Tecla Esquerda
@@ -416,6 +453,10 @@ function movement(object,time) {
 				object.angle = 180 * time * Math.PI/180;
 				object.rotation.z -= object.angle;
 		}
+
+		//ChaseCamera.lookAt(object.position);
+		//ChaseCamera.position.y = object.position.y;
+
 
  /*  Para parar o carro de acordo com as leis de movimento implementadas */
 	 	object.vx -= object.vx*time * Math.cos(object.angle);
