@@ -26,7 +26,7 @@ function init() {
     'use strict';
 
 		clock =  new THREE.Clock();
-		activeCamera=3;
+		activeCamera=2;
     renderer = new THREE.WebGLRenderer({ antialias: true });
 
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -52,7 +52,7 @@ function init() {
     window.addEventListener( 'resize', onResize); // Deteta os eventos de alteração de tamanho da janela
     window.addEventListener( 'keydown', onKeyDown, false ); // Deteta os eventos de tecla a ser premida
 		window.addEventListener( 'keyup', onKeyUp, false ); // Deteta os eventos de libertacao de teclas
-		window.addEventListener("keypress", onKeyPressed);
+		window.addEventListener( 'keypress' , onKeyPressed);
 }
 
 function animate() {
@@ -81,21 +81,19 @@ function createCamera(){
 
 
 		ChaseCamera= new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-		BackCamera= new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+		BackCamera= new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
 		OrthoCamera = new THREE.OrthographicCamera(-window.innerWidth, window.innerWidth, window.innerHeight, -window.innerHeight, 0.1, 51);
 
 		BackCamera.position.x = 0;
 		BackCamera.position.y = -500;
-		BackCamera.position.z = 250;
+		BackCamera.position.z = 600;
 		BackCamera.rotation.x = 0.8;
 
 		ChaseCamera.position.x = -100;
 		ChaseCamera.position.y = 0;
 		ChaseCamera.position.z = 100;
 		ChaseCamera.rotation.y = -1;
-
 		ChaseCamera.rotation.z = -90 * Math.PI / 180;
-
 
 		OrthoCamera.position.z=30;
 
@@ -146,11 +144,11 @@ function onKeyPressed(e) {
 	}
 
 	if (e.keyCode == 50) {
-		activeCamera == 2;
+		activeCamera = 2;
 	}
 
 	if (e.keyCode == 51) {
-		activeCamera == 3;
+		activeCamera = 3;
 	}
 }
 
@@ -175,7 +173,6 @@ function onKeyUp(e) {
         move.right = false;
     }
 }
-
 
 function onResize(){
   'use strict';
@@ -267,12 +264,12 @@ function createCheerioCircle(radius, x, y, flag1, flag2){
     if (flag2 == 2){ //circulos de fora
         if (flag1 == 1) // circulo da direita
             for (var i = 0; i<360; i+=6){
-                if (i<160 || i>210)
+                if (i<155 || i>210)
                     createCheerio(Math.cos(i * (Math.PI/180))*radius + x, Math.sin(i* (Math.PI/180))*radius + y);
                 }
         else { // circulo da esquerda
             for (var i = 0; i<360; i+=6){
-                if (i>30 && i<340)
+                if (i>30 && i<335)
                     createCheerio(Math.cos(i * (Math.PI/180))*radius + x, Math.sin(i* (Math.PI/180))*radius + y);
             }
         }
@@ -288,7 +285,7 @@ function createOrange(x,y) {
   'use strict';
 
 	var orange = new THREE.Object3D();
-  geometry = new THREE.SphereGeometry(30, 32, 22);
+  geometry = new THREE.SphereGeometry(30, 50, 50);
   material = new THREE.MeshBasicMaterial( { color: 0xFFA500, wireframe: false});
   mesh = new THREE.Mesh( geometry, material );
 
@@ -301,7 +298,8 @@ function createOrange(x,y) {
 	leaf.position.z = 30;
 	orange.add(leaf);
 
-  orange.position.set(x,y,0);
+  orange.position.set(x, y, 0);
+	orange.translateZ(15);
 	orange.category = "orange";
 	orange.acceleration = Math.floor(Math.random() * 3) + 1;
 	orange.vx = 0;
