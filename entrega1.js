@@ -22,6 +22,11 @@ var move = {
 	right: false
 };
 
+var hasCollision = false;
+
+var disableForward = false;
+var disableBackward = false;
+
 function init() {
     'use strict';
 
@@ -70,6 +75,9 @@ function createScene() {
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0xf0f0f0);
 
+		var axisHelper = new THREE.AxisHelper( 200 );
+		scene.add( axisHelper );
+
     createFloor(0, 0, 0);
     createCircularTrack(350, 150, 300, 0, 1); // Cria a pista da esquerda
     createCircularTrack(350, 150, -300, 0, -1); // Cria a pista da direita
@@ -80,14 +88,15 @@ function createCamera(){
 		'use strict';
 
 
-		ChaseCamera= new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-		BackCamera= new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-		OrthoCamera = new THREE.OrthographicCamera(-window.innerWidth, window.innerWidth, window.innerHeight, -window.innerHeight, 0.1, 51);
+		ChaseCamera= new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 3500);
+		BackCamera= new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 3500);
+		OrthoCamera = new THREE.OrthographicCamera(-window.innerWidth, window.innerWidth, window.innerHeight, -window.innerHeight, 0.1, 150);
 
-		BackCamera.position.x = 0;
-		BackCamera.position.y = -500;
-		BackCamera.position.z = 600;
-		BackCamera.rotation.x = 0.8;
+		BackCamera.position.y = -1500;
+		BackCamera.position.z = 1000;
+		BackCamera.rotation.y = -90 * Math.PI / 180;
+
+		BackCamera.lookAt(scene.position);
 
 		ChaseCamera.position.x = -100;
 		ChaseCamera.position.y = 0;
@@ -95,7 +104,7 @@ function createCamera(){
 		ChaseCamera.rotation.y = -1;
 		ChaseCamera.rotation.z = -90 * Math.PI / 180;
 
-		OrthoCamera.position.z=30;
+		OrthoCamera.position.z=100;
 
 }
 
@@ -289,20 +298,23 @@ function createOrange(x,y) {
   'use strict';
 
 	var orange = new THREE.Object3D();
-  	geometry = new THREE.SphereGeometry(30, 32, 22);
-  	material = new THREE.MeshBasicMaterial( { color: 0xFFA500, wireframe: false});
-  	mesh = new THREE.Mesh( geometry, material );
-
+  geometry = new THREE.SphereGeometry(30, 20, 20);
+  material = new THREE.MeshBasicMaterial( { color: 0xFFA500, wireframe: false});
+  mesh = new THREE.Mesh( geometry, material );
 	orange.add(mesh);
 
 	geometry = new THREE.BoxGeometry(10, 10, 2);
-  	material = new THREE.MeshBasicMaterial({ color: 0x008000, wireframe: false});
-  	var leaf = new THREE.Mesh( geometry, material );
+  material = new THREE.MeshBasicMaterial({ color: 0x008000, wireframe: false});
+  var leaf = new THREE.Mesh( geometry, material );
+	leaf.translateZ(30);
+	leaf.rotation.x += 10;
 
-	leaf.position.z = 30;
 	orange.add(leaf);
 
-  	orange.position.set(x,y,0);
+	orange.translateX(x);
+	orange.translateY(y);
+	orange.translateZ(25);
+
 	orange.category = "orange";
 	orange.acceleration = Math.floor(Math.random() * 3) + 1;
 	orange.vx = 0;
@@ -413,8 +425,9 @@ function movement(object,time) {
 	if(object.category == "car")
 	{
 
-		if (move.forward == true) // Tecla Cima
+		if (move.forward == true && disableForward == false) // Tecla Cima
 		{
+
 			 	object.drag = 1;
 			 	/* Atualizacao do vetor velocidade eixo x*/
 			 	object.vx += (object.acceleration*time) * Math.cos(object.angle);
@@ -426,10 +439,16 @@ function movement(object,time) {
 				object.vy *= object.drag * Math.sin(object.angle);
 				object.translateY(object.vy + (0.5)*object.acceleration*time*time);
 
+				//if (disableBackward == true && hasCollision == false) {
+					//disableBackward = false;
+				//}
 
 			}
-		if (move.backward == true) // Tecla Baixo
+		if (move.backward == true && disableBackward == false) // Tecla Baixo
 		{
+			if (disableForward == true && hasCollision == false) {
+				disableForward = false;
+			}
 				/* Atualizacao do vetor velocidade eixo x*/
 			 	object.vx += (-object.acceleration*time) * Math.cos(object.angle);
 			 	object.vx *= object.drag * Math.cos(object.angle);
@@ -461,10 +480,12 @@ function movement(object,time) {
 
 
  /*  Para parar o carro de acordo com as leis de movimento implementadas */
-	 	object.vx -= object.vx*time * Math.cos(object.angle);
-		object.vx -= object.vx*time * Math.sin(object.angle);
-	 	object.translateX(object.vx);
-		object.translateY(object.vy);
+
+			object.vx -= object.vx*time * Math.cos(object.angle);
+			object.vx -= object.vx*time * Math.sin(object.angle);
+			object.translateX(object.vx);
+			object.translateY(object.vy);
+
 	 }
 
 	 if (object.category == "orange") {
@@ -473,6 +494,7 @@ function movement(object,time) {
 		 object.translateX(object.vx +(0.5)*object.acceleration*time*time);
 		 object.rotation.x += 5*time;
 		 }
+
 }
 
 function position(object) {
@@ -480,12 +502,15 @@ function position(object) {
 		if (object.position.x >= 1250) {
 			object.visible = false; // Remove laranja de cena
 		}
+
 		if (object.position.x >= 2500) {
 			object.vx = 0;
 			object.position.x = Math.floor(Math.random() * 1200) - 1200 ;
 			object.position.y = Math.floor(Math.random() * 700) - 700 ;
 
-			object.visible = true;
+			setTimeout(function () {
+				object.visible = true;
+			}, Math.floor(Math.random() * 5000) + 2000);
 		}
 	}
 }
@@ -500,15 +525,25 @@ function collision(object){
 			if (object != node){
 				if (node.category == "butter"){
 					if (aabb1.intersectsBox(aabb2)){
-						move.forward = false;
+						if (move.forward == true) {
+							hasCollision = true;
+							move.forward = false;
+							object.vx = 0;
+							disableForward = true;
+						}
+						if (move.backward == true) {
+							move.backward = false;
+							object.vx = 0;
+							disableBackward = true;
+						}
 					}
 					aabb2.makeEmpty();
 				}
 				if (node.category == "orange"){
 					if (aabb1.intersectsBox(aabb2)){
-						car.position.set(1000, 10, 10);
+						car.position.set(0, 0, 7);
 						move.forward = false;
-
+						object.vx = 0
 					}
 					aabb2.makeEmpty();
 				}
