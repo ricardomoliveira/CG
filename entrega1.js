@@ -337,7 +337,7 @@ function createButter(x,y) {
 
 	butter.position.set(x,y,0);
 	butter.category = "butter";
-	butter.r = 80;
+	butter.r = Math.sqrt((40^2) + (25^2));
 
   scene.add(butter);
 }
@@ -383,7 +383,7 @@ function createCar(x, y, z){
 	car.drag = 0.99; /* Atrito entre o carro e a pista */
 	car.angle = 0; /* Ângulo de direção do carro */
 	car.category = "car";
-	car.ray = 30;
+	car.r = Math.sqrt((15^2) + (7.5^2));
 
     createWheel(chassis, -x/2 + 5, y/2, 1);
     createWheel(chassis, x/2 - 5, y/2, 1);
@@ -532,26 +532,38 @@ function position(object) {
 }
 
 function collision(object, time){
-	aabb1 = new THREE.Box3().setFromObject(object);
+	'use strict'
+	var aabb1 = new THREE.Box3().setFromObject(object);
 	if (object.category == "car"){
 		scene.traverse(function(node) {
-			aabb2 = new THREE.Box3().setFromObject(node);
+			var aabb2 = new THREE.Box3().setFromObject(node);
 			if (object != node){
 				if (node.category == "butter"){
-					// var d = Math.sqrt((object.position.x - node.position.x)^2 + (object.position.y - node.position.y)^2);
+
 					if (aabb1.intersectsBox(aabb2)){
 						object.vx = 0;
 						object.vy = 0;
 						object.position.x = object.previousX;
 						object.position.y = object.previousY;
+						move.forward = 0;
 					}
+
+
+					// 	var d = Math.sqrt((object.position.x - node.position.x)^2 + (object.position.y - node.position.y)^2);
+					// 	console.log(d);
 					// 	var x = object.position.x - node.position.x;
 					// 	var y = object.position.y - node.position.y;
-					// 	angle = Math.atan2(y/x);
-					// 	dx = ((object.r + node.r) - d) * Math.cos(angle);
-					// 	dy = ((object.r + node.r) - d) * Math.sin(angle);
-					// 	object.translateX(dx);
-					// 	object.translateY(dy);
+					// 	var angle = Math.atan(y/x);
+					// 	var dx = ((object.r + node.r) - d) * Math.cos(angle);
+					// 	var dy = ((object.r + node.r) - d) * Math.sin(angle);
+					// 	console.log(d);
+					// 	console.log(angle);
+					// 	console.log(object.r);
+					// 	console.log(dx);
+					// 	object.position.x += dx;
+					// 	object.position.y += dy;
+					// 	aabb2.makeEmpty();
+					// 	aabb1.makeEmpty();
 					// }
 
 
@@ -568,7 +580,7 @@ function collision(object, time){
 					// 		object.vy = 0;
 					// 		// disableBackward = true;
 					// 	}
-					aabb2.makeEmpty();
+
 				}
 				else if (node.category == "orange"){
 					if (aabb1.intersectsBox(aabb2)){
