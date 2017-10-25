@@ -155,6 +155,7 @@ function onKeyUp(e) {
 function onResize(){
   'use strict';
 	if (activeCamera == 1){
+
 		renderer.setSize(window.innerWidth, window.innerHeight);
 
 		var ratioJanela = renderer.getSize().height /renderer.getSize().width; // Altura da janela / Comprimento da janela : assegura o r·cio da janela
@@ -178,6 +179,9 @@ function onResize(){
 	}
 	if (activeCamera == 2) {
 
+		renderer.setSize(window.innerWidth, window.innerHeight);
+	
+
 		if (window.innerHeight > window.innerWidth) {
 			BackCamera.aspect = window.innerHeight / window.innerWidth;
 			console.log('altura maior que largura');
@@ -187,11 +191,16 @@ function onResize(){
 			console.log('largura maior que altura');
 		}
 
+		//renderer.setSize(window.innerWidth, window.innerHeight);
+
+
 		BackCamera.updateProjectionMatrix();
 	}
 
 
 	if (activeCamera == 3) {
+
+		renderer.setSize(window.innerWidth, window.innerHeight);
 
 		if (window.innerHeight > window.innerWidth) {
 			ChaseCamera.aspect = window.innerHeight / window.innerWidth;
