@@ -59,7 +59,7 @@ function createCar(x, y, z){
 	  car.drag = 0.99; /* Atrito entre o carro e a pista */
 	  car.angle = 0; /* Ângulo de direção do carro */
 	  car.category = "car";
-	  car.r = Math.sqrt((15^2) + (7.5^2));
+	  car.r = Math.sqrt(281.25);
 
 
     createWheel(chassis, -x/2 + 5, y/2, 1);

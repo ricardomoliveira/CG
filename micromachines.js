@@ -30,11 +30,11 @@ function init() {
     window.addEventListener( 'keydown', onKeyDown, false ); // Deteta os eventos de tecla a ser premida
 		window.addEventListener( 'keyup', onKeyUp, false ); // Deteta os eventos de libertacao de teclas
 		window.addEventListener( 'keypress' , onKeyPressed);
+		window.addEventListener('beforeunload', onResize, false);
 }
 
 function animate() {
 
-    // updateCar(); // Atualiza o movimento do carro
 		update(); // Caso seja premida a tecla 'a' ou 'A', e atualizada a wireframe de todos os objetos
     render(); // Coloca os objetos em cena em exposição
 
@@ -154,27 +154,56 @@ function onKeyUp(e) {
 
 function onResize(){
   'use strict';
+	if (activeCamera == 1){
+		renderer.setSize(window.innerWidth, window.innerHeight);
 
-	renderer.setSize(window.innerWidth, window.innerHeight);
+		var ratioJanela = renderer.getSize().height /renderer.getSize().width; // Altura da janela / Comprimento da janela : assegura o r·cio da janela
 
-	var ratioJanela = renderer.getSize().height /renderer.getSize().width; // Altura da janela / Comprimento da janela : assegura o rácio da janela
+		if (ratioJanela > ratioMesa) { // Atualizamos as medidas da mesa para o resize vertical
+			OrthoCamera.right = 2500 / 2;
+			OrthoCamera.left = -2500 / 2;
+			OrthoCamera.top = (1500 * ratioJanela) / (ratioMesa * 2); // Assegurar uma altura m·xima aceit·vel
+			OrthoCamera.bottom = (-1500 * ratioJanela) / (ratioMesa * 2); // Assegurar uma altura minima aceit·vel
 
-	if (ratioJanela > ratioMesa) { // Atualizamos as medidas da mesa para o resize vertical
-		camera.right = 2500 / 2;
-		camera.left = -2500 / 2;
-		camera.top = (1500 * ratioJanela) / (ratioMesa * 2); // Assegurar uma altura máxima aceitável
-		camera.bottom = (-1500 * ratioJanela) / (ratioMesa * 2); // Assegurar uma altura minima aceitável
+		}
+		else { // Atualizamos as medidas da mesa para o resize horizontal
+	    	OrthoCamera.right = (2500 / ratioJanela) / ( (1 / ratioMesa) * 2);
+	    	OrthoCamera.left = (-2500 / ratioJanela) / ( (1 / ratioMesa) * 2);
+			OrthoCamera.top = 1500 / 2;
+			OrthoCamera.bottom = -1500 / 2;
 
+		}
+
+		OrthoCamera.updateProjectionMatrix();
 	}
-	else { // Atualizamos as medidas da mesa para o resize horizontal
-    	camera.right = (2500 / ratioJanela) / ( (1 / ratioMesa) * 2);
-    	camera.left = (-2500 / ratioJanela) / ( (1 / ratioMesa) * 2);
-		camera.top = 1500 / 2;
-		camera.bottom = -1500 / 2;
+	if (activeCamera == 2) {
 
+		if (window.innerHeight > window.innerWidth) {
+			BackCamera.aspect = window.innerHeight / window.innerWidth;
+			console.log('altura maior que largura');
+		}
+		else {
+			BackCamera.aspect = window.innerWidth / window.innerHeight;
+			console.log('largura maior que altura');
+		}
+
+		BackCamera.updateProjectionMatrix();
 	}
 
-	camera.updateProjectionMatrix();
+
+	if (activeCamera == 3) {
+
+		if (window.innerHeight > window.innerWidth) {
+			ChaseCamera.aspect = window.innerHeight / window.innerWidth;
+			console.log('altura maior que largura');
+		}
+		else {
+			ChaseCamera.aspect = window.innerWidth / window.innerHeight;
+			console.log('largura maior que altura');
+		}
+
+		ChaseCamera.updateProjectionMatrix();
+	}
 
 }
 
@@ -343,8 +372,8 @@ function collision(object, time){
 						node.translateX(dx * (node.vx + 0.5 * node.acceleration));
 						node.translateY(dy * (node.vy + 0.5 * node.acceleration));
 					}
-
 				}
+
 				else if (node.category == "orange" && node.collision == true){
 					if (object.r + node.r >= d) {
 						object.position.set(0, 0, 7);
@@ -356,5 +385,24 @@ function collision(object, time){
 			}
 		});
 	}
+
+	if (object.category == "cheerio"){
+	    scene.traverse(function(node) {
+	        var d = Math.sqrt(Math.pow(object.position.x - node.position.x, 2) + Math.pow(object.position.y - node.position.y, 2));
+
+	        if (object != node && node.category == "cheerio"){
+	            if (object.r + node.r >= d){
+	                var dx = (node.position.x - object.position.x) / Math.abs(node.position.x - object.position.x);
+	                var dy = (node.position.y - object.position.y) / Math.abs(node.position.y - object.position.y);
+	                node.vx = object.vx * 0.5;
+	                node.vy = object.vy * 0.5;
+	                node.translateX(dx * (node.vx + 0.5 * node.acceleration));
+	                node.translateY(dy * (node.vy + 0.5 * node.acceleration));
+
+	            }
+	        }
+	    });
+	}
+
 	}
 }

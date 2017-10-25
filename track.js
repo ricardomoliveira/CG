@@ -48,7 +48,7 @@ function createCheerio(x, y){
 	cheerio.acceleration = 5;
 	cheerio.category = "cheerio";
 	cheerio.mass = 10;
-	cheerio.r = 20;
+	cheerio.r = 15;
 
     scene.add(cheerio);
 }
@@ -130,7 +130,7 @@ function createButter(x,y) {
 
     butter.position.set(x,y,0);
 	  butter.category = "butter";
-	  butter.r = Math.sqrt(3300);
+	  butter.r = Math.sqrt(2400);
 
     butter.translateZ(10);
 
