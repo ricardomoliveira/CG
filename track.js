@@ -1,16 +1,19 @@
 function createFloor(x, y, z) {
     'use strict';
 
+    var table = new THREE.Object3D();
+
     material = new THREE.MeshBasicMaterial({ color: 0x696969, wireframe: false});
 
     geometry = new THREE.CubeGeometry(2500, 1500, 1);
 
-    table = new THREE.Mesh(geometry, material);
-
+    mesh = new THREE.Mesh(geometry, material);
+    table.add(mesh);
     table.position.x = x;
     table.position.y = y;
     table.position.z = z;
-
+    table.r1 = 1250;
+    table.r2 = 2500;
     scene.add(table);
 
 }

@@ -292,24 +292,28 @@ function movement(object,time) {
 
 function position(object) {
 	if (object.category == "orange") {
-		if (object.position.x >= 1250) {
-			object.visible = false; // Remove laranja de cena
-			object.collision = false;
-		}
+        scene.traverse(function(node) {
+            if (node.category == "table"){
+                if (object.position.x >= node.r1) {
+                    object.visible = false; // Remove laranja de cena
+                    object.collision = false;
+                }
+    		}
 
-		if (object.position.x >= 2500) {
-			object.vx = 0;
-			object.position.x = Math.floor(Math.random() * 1200) - 1200 ;
-			object.position.y = Math.floor(Math.random() * 700) - 700 ;
+    		if (object.position.x >= node.r2) {
+    			object.vx = 0;
+    			object.position.x = Math.floor(Math.random() * 1200) - 1200 ;
+    			object.position.y = Math.floor(Math.random() * 700) - 700 ;
 
-			setTimeout(function () {
-				object.visible = true;
-				object.collision = true;
-			}, Math.floor(Math.random() * 5000) + 2000);
-		}
-	}
+    			setTimeout(function () {
+    				object.visible = true;
+    				object.collision = true;
+    			}, Math.floor(Math.random() * 5000) + 2000);
+    		}
+        });
+    }
 
-	if (object.category == "car") {
+	else if (object.category == "car") {
 		if (object.position.x >= 1250 || object.position.x <= -1250 || object.position.y >= 750 || object.position.y <= -750) {
 			object.visible = false; // Remove laranja de cena
 		}
