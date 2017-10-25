@@ -6,26 +6,6 @@ var ratioMesa = 1500/2500; // Altura da mesa / Comprimento da mesa : assegura o 
 
 var wrfrm = false; // Atributo de wireframe dos objetos
 
-
-var car = {
-		category: "car",
-		acceleration: 0,
-		vx: 0,
-		angle: 0,
-		vy: 0,
-		drag: 0,
-		previousX: 0,
-		previousY: 0,
-		r: 0
-};
-
-var move = {
-	forward: false,
-	backward: false,
-	left: false,
-	right: false
-};
-
 var hasCollision = false;
 
 var disableForward = false;
@@ -34,27 +14,18 @@ var disableBackward = false;
 function init() {
     'use strict';
 
+		activeCamera = 1;
+
 		clock =  new THREE.Clock();
-		activeCamera=2;
-    renderer = new THREE.WebGLRenderer({ antialias: true });
 
+		renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-
     document.body.appendChild(renderer.domElement);
 
     createScene();
-    createCamera();
-//    createPattern();
+		createTrack();
+		createCamera();
 
-    createOrange(100, -450);
-    createOrange(-350, 50);
-    createOrange(400, 500);
-
-    createButter(400, 0);
-    createButter(250, 600);
-    createButter(-100, 450);
-    createButter(650, -450);
-    createButter(-600, -350);
 
     createCar(30, 15, 7);
 
@@ -82,10 +53,7 @@ function createScene() {
 		var axisHelper = new THREE.AxisHelper( 200 );
 		scene.add( axisHelper );
 
-    createFloor(0, 0, 0);
-    createCircularTrack(350, 150, 300, 0, 1); // Cria a pista da esquerda
-    createCircularTrack(350, 150, -300, 0, -1); // Cria a pista da direita
-
+		createFloor(0, 0, 0);
 }
 
 function createCamera(){
@@ -213,205 +181,6 @@ function onResize(){
 
 }
 
-function createFloor(x, y, z) {
-    'use strict';
-
-    material = new THREE.MeshBasicMaterial({ color: 0x696969, wireframe: false});
-
-    geometry = new THREE.CubeGeometry(2500, 1500, 1);
-
-    table = new THREE.Mesh(geometry, material);
-
-    table.position.x = x;
-    table.position.y = y;
-    table.position.z = z;
-
-    scene.add(table);
-
-}
-
-/*
-function createPattern() {
-  'use strict';
-
-  for (var i = -1225; i < 1225; i+=100) { // Como o tamanho de cada objeto é 50, o seu centro fica a 25. Como tal, para ter uma mesa coberta totalmente, a primeira e ultima permitem que a fila de objetos não saia do plano da mesa.
-      for (var j = -725; j < 750; j+=50) {
-          var cube = new THREE.Object3D();
-          var material = new THREE.MeshBasicMaterial({ color: 0xFFFFFF});
-          var geometry = new THREE.CubeGeometry(50, 50, 1);
-          var mesh = new THREE.Mesh(geometry, material);
-
-          cube.add(mesh);
-          cube.position.x = i;
-          cube.position.y = j;
-
-          scene.add(cube);
-    }
-  }
-}
-*/
-
-function createCheerio(x, y){
-    'use strict';
-
-    var geometry = new THREE.TorusBufferGeometry(12, 2.5, 8, 100);
-    var material = new THREE.MeshBasicMaterial({color: 0x000000});
-    var torus = new THREE.Mesh(geometry, material);
-    torus.position.x = x;
-    torus.position.y = y;
-    torus.position.z = 1;
-
-	torus.vx = 0;
-	torus.vy = 0;
-	torus.acceleration = 7;
-
-    scene.add(torus);
-}
-
-function createCircularTrack(r1, r2, x, y, flag){
-    'use strict';
-
-    createCheerioCircle(r1, x, y, flag, 2);
-    createCheerioCircle(r2, x, y, flag, 1);
-}
-
-function createCheerioCircle(radius, x, y, flag1, flag2){
-    'use strict';
-
-    if (flag2 == 2){ //circulos de fora
-        if (flag1 == 1) // circulo da direita
-            for (var i = 0; i<360; i+=6){
-                if (i<155 || i>210)
-                    createCheerio(Math.cos(i * (Math.PI/180))*radius + x, Math.sin(i* (Math.PI/180))*radius + y);
-                }
-        else { // circulo da esquerda
-            for (var i = 0; i<360; i+=6){
-                if (i>30 && i<335)
-                    createCheerio(Math.cos(i * (Math.PI/180))*radius + x, Math.sin(i* (Math.PI/180))*radius + y);
-            }
-        }
-    }
-    else { // ciculos de dentro
-        for (var i = 0; i<360; i+=10){
-            createCheerio(Math.cos(i * (Math.PI/180))*radius + x, Math.sin(i* (Math.PI/180))*radius + y);
-        }
-    }
-}
-
-function createOrange(x,y) {
-  'use strict';
-
-	var orange = new THREE.Object3D();
-	geometry = new THREE.SphereGeometry(30, 20, 20);
-	material = new THREE.MeshBasicMaterial( { color: 0xFFA500, wireframe: false});
-	mesh = new THREE.Mesh( geometry, material );
-	orange.add(mesh);
-
-	geometry = new THREE.BoxGeometry(10, 10, 2);
-  	material = new THREE.MeshBasicMaterial({ color: 0x008000, wireframe: false});
-  	var leaf = new THREE.Mesh( geometry, material );
-	leaf.translateZ(30);
-	leaf.rotation.x += 10;
-
-	orange.add(leaf);
-
-	orange.translateX(x);
-	orange.translateY(y);
-	orange.translateZ(25);
-
-	orange.category = "orange";
-	orange.acceleration = Math.floor(Math.random() * 3) + 1;
-	orange.vx = 0;
-	orange.r = 30;
-
-
-  scene.add(orange);
-}
-
-function createButter(x,y) {
-  'use strict';
-
-  geometry = new THREE.BoxGeometry(80, 50, 50);
-  material = new THREE.MeshBasicMaterial( {color: 0xFFFF80, wireframe: false} );
-  var butter = new THREE.Mesh(geometry, material);
-
-	butter.position.set(x,y,0);
-	butter.category = "butter";
-	butter.r = Math.sqrt((40^2) + (25^2));
-
-  scene.add(butter);
-}
-
-function createWheel(obj, x, y, z){
-    'use strict';
-
-    geometry = new THREE.TorusBufferGeometry(2, 2, 8, 100);
-    material = new THREE.MeshBasicMaterial({color: 0x000000, wireframe: false} );
-    var torus = new THREE.Mesh(geometry, material);
-
-    torus.position.x = x;
-    torus.position.y = y;
-    torus.position.z = z;
-
-    torus.rotation.x = Math.PI/2;
-
-    obj.add(torus);
-}
-
-function addTop(car, x, y, z){
-    'use strict'
-
-    geometry = new THREE.BoxGeometry(x, y, z);
-    material = new THREE.MeshBasicMaterial( {color: 0xff2800, wireframe: false} );
-    var top = new THREE.Mesh(geometry, material);
-
-	top.position.z = 2;
-    car.add(top); // Adiciona ao carro uma parte de cima
-}
-
-function createCar(x, y, z){
-    'use strict'
-
-    var chassis, top, acceleration;
-
-    chassis = new THREE.Object3D();
-	car = new THREE.Object3D();
-
-	car.vx = 0; /* Velocidade eixo x */
-	car.vy = 0; /* Velocidade eixo y */
-	car.acceleration = 10; /* Aceleração pré-definida do carro */
-	car.drag = 0.99; /* Atrito entre o carro e a pista */
-	car.angle = 0; /* Ângulo de direção do carro */
-	car.category = "car";
-	car.r = Math.sqrt((15^2) + (7.5^2));
-
-    createWheel(chassis, -x/2 + 5, y/2, 1);
-    createWheel(chassis, x/2 - 5, y/2, 1);
-    createWheel(chassis, x/2 - 5, -y/2, 1);
-    createWheel(chassis, -x/2 + 5, -y/2, 1);
-
-    addTop(car, x, y, z);
-
-	/* To-do
-    cone.position.x=x/20;
-    cone.position.y=y/25;
-    cone.position.z=17;
-    cone.rotation.z+=Math.PI*1.5;
-    car.add(cone);
-
-		*/
-
-	car.add( ChaseCamera );
-
-    car.add(chassis);
-
-	car.position.z = 7;
-
-	scene.add(car);
-
-
-}
-
 function update()
 {
 	var delta = clock.getDelta();
@@ -491,10 +260,6 @@ function movement(object,time) {
 				object.rotation.z -= object.angle;
 		}
 
-		//ChaseCamera.lookAt(object.position);
-		//ChaseCamera.position.y = object.position.y;
-
-
  /*  Para parar o carro de acordo com as leis de movimento implementadas */
 
 		object.vx -= object.vx*time * Math.cos(object.angle);
@@ -527,6 +292,15 @@ function position(object) {
 			setTimeout(function () {
 				object.visible = true;
 			}, Math.floor(Math.random() * 5000) + 2000);
+		}
+	}
+
+	if (object.category == "car") {
+		if (object.position.x >= 1250) {
+			object.visible = false; // Remove laranja de cena
+		}
+		else {
+			object.visible = true;
 		}
 	}
 }
