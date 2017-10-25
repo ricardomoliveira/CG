@@ -6,10 +6,7 @@ var ratioMesa = 1500/2500; // Altura da mesa / Comprimento da mesa : assegura o 
 
 var wrfrm = false; // Atributo de wireframe dos objetos
 
-var hasCollision = false;
-
-var disableForward = false;
-var disableBackward = false;
+var driving = false;
 
 function init() {
     'use strict';
@@ -202,7 +199,7 @@ function movement(object,time) {
 	if(object.category == "car")
 	{
 
-		if (move.forward == true )//&& disableForward == false) // Tecla Cima
+		if (move.forward == true ) // Tecla Cima
 		{
 
 			 	object.drag = 1;
@@ -211,38 +208,24 @@ function movement(object,time) {
 				object.vx *= object.drag * Math.cos(object.angle);
 				object.translateX(object.vx +(0.5)*object.acceleration*time*time);
 
-				object.previousX = object.position.x - (object.vx +(0.5)*object.acceleration*time*time);
-
 				/* Atualizacao do vetor velocidade eixo y*/
 				object.vy += (object.acceleration*time) * Math.sin(object.angle);
 				object.vy *= object.drag * Math.sin(object.angle);
 				object.translateY(object.vy + (0.5)*object.acceleration*time*time);
 
-				object.previousY = object.position.y - (object.vy +(0.5)*object.acceleration*time*time);
-
-				//if (disableBackward == true && hasCollision == false) {
-					//disableBackward = false;
-				//}
 
 			}
-		if (move.backward == true) //&& disableBackward == false) // Tecla Baixo
+		if (move.backward == true) // Tecla Baixo
 		{
-			// if (disableForward == true && hasCollision == false) {
-			// 	disableForward = false;
-			// }
-				/* Atualizacao do vetor velocidade eixo x*/
 
 			 	object.vx += (-object.acceleration*time) * Math.cos(object.angle);
 			 	object.vx *= object.drag * Math.cos(object.angle);
 				object.translateX(object.vx + (0.5)*object.acceleration*time*time);
 
-				object.previousX = object.position.x + (object.vx +(0.5)*object.acceleration*time*time);
 				/* Atualizacao do vetor velocidade eixo y*/
 				object.vy += (-object.acceleration*time) * Math.sin(object.angle);
 			 	object.vy *= object.drag * Math.sin(object.angle);
 				object.translateY(object.vy + (0.5) * object.acceleration*time*time);
-
-				object.previousY = object.position.y - (object.vy +(0.5)*object.acceleration*time*time);
 
 		}
 
@@ -262,10 +245,10 @@ function movement(object,time) {
 
  /*  Para parar o carro de acordo com as leis de movimento implementadas */
 
-		object.vx -= object.vx*time * Math.cos(object.angle);
-		object.vx -= object.vx*time * Math.sin(object.angle);
-		object.translateX(object.vx);
-		object.translateY(object.vy);
+			object.vx -= object.vx*time * Math.cos(object.angle);
+			object.vx -= object.vx*time * Math.sin(object.angle);
+			object.translateX(object.vx);
+			object.translateY(object.vy);
 
 	 }
 
@@ -282,6 +265,7 @@ function position(object) {
 	if (object.category == "orange") {
 		if (object.position.x >= 1250) {
 			object.visible = false; // Remove laranja de cena
+			object.collision = false;
 		}
 
 		if (object.position.x >= 2500) {
@@ -291,12 +275,13 @@ function position(object) {
 
 			setTimeout(function () {
 				object.visible = true;
+				object.collision = true;
 			}, Math.floor(Math.random() * 5000) + 2000);
 		}
 	}
 
 	if (object.category == "car") {
-		if (object.position.x >= 1250) {
+		if (object.position.x >= 1250 || object.position.x <= -1250 || object.position.y >= 750 || object.position.y <= -750) {
 			object.visible = false; // Remove laranja de cena
 		}
 		else {
@@ -305,103 +290,71 @@ function position(object) {
 	}
 }
 
+
 function collision(object, time){
 	'use strict'
-	var aabb1 = new THREE.Box3().setFromObject(object);
 	if (object.category == "car"){
 		scene.traverse(function(node) {
-			var aabb2 = new THREE.Box3().setFromObject(node);
+			var d = Math.sqrt(Math.pow(object.position.x - node.position.x, 2) + Math.pow(object.position.y - node.position.y, 2));
 			if (object != node){
 				if (node.category == "butter"){
 
-					if (aabb1.intersectsBox(aabb2)){
-						object.vx = 0;
-						object.vy = 0;
-						object.position.x = object.previousX;
-						object.position.y = object.previousY;
-						move.forward = 0;
+					if (move.forward || object.vx > 0) {
+						if (object.r + node.r > d) {
+
+							var dx = ((object.r + node.r) - d) * Math.cos(object.angle + Math.PI);
+							var dy = ((object.r + node.r) - d) * Math.sin(object.angle + Math.PI);
+
+							object.vx = 0;
+							object.vy = 0;
+							move.backward = false;
+							move.forward = false;
+
+
+							object.translateX(dx);
+							object.translateY(dy);
+						}
+					}
+					if (move.backward || object.vx < 0) {
+						if (object.r + node.r > d){
+
+							var dx = ((object.r + node.r) - d) * Math.cos(object.angle);
+							var dy = ((object.r + node.r) - d) * Math.sin(object.angle);
+
+
+							object.vx = 0;
+							object.vy = 0;
+							move.forward = false;
+							object.translateX(dx);
+							object.translateY(dy);
+
+						}
 					}
 
+				}
+				else if (node.category == "cheerio"){
 
-					// 	var d = Math.sqrt((object.position.x - node.position.x)^2 + (object.position.y - node.position.y)^2);
-					// 	console.log(d);
-					// 	var x = object.position.x - node.position.x;
-					// 	var y = object.position.y - node.position.y;
-					// 	var angle = Math.atan(y/x);
-					// 	var dx = ((object.r + node.r) - d) * Math.cos(angle);
-					// 	var dy = ((object.r + node.r) - d) * Math.sin(angle);
-					// 	console.log(d);
-					// 	console.log(angle);
-					// 	console.log(object.r);
-					// 	console.log(dx);
-					// 	object.position.x += dx;
-					// 	object.position.y += dy;
-					// 	aabb2.makeEmpty();
-					// 	aabb1.makeEmpty();
-					// }
+					if (object.r + node.r >= d){
 
-
-					// 	if (move.forward == true) {
-					// 		// disableForward = true;
-					// 		// hasCollision = true;
-					// 		// move.forward = false;
-					// 		object.vx = 0;
-					// 		object.vy = 0;
-					// 	}
-					// 	if (move.backward == true) {
-					// 		// move.backward = false;
-					// 		object.vx = 0;
-					// 		object.vy = 0;
-					// 		// disableBackward = true;
-					// 	}
+						dx = (node.position.x - object.position.x) / Math.abs(node.position.x - object.position.x);
+						dy = (node.position.y - object.position.y) / Math.abs(node.position.y - object.position.y);
+						node.vx = object.vx * 0.4;
+						node.vy = object.vy * 0.4;
+						node.translateX(dx * (node.vx + 0.5 * node.acceleration));
+						node.translateY(dy * (node.vy + 0.5 * node.acceleration));
+					}
 
 				}
-				else if (node.category == "orange"){
-					if (aabb1.intersectsBox(aabb2)){
+				else if (node.category == "orange" && node.collision == true){
+					if (object.r + node.r >= d) {
 						object.position.set(0, 0, 7);
 						move.forward = false;
 						object.vx = 0;
 						object.vy = 0;
 					}
-					aabb2.makeEmpty();
 				}
-				else if (node.category == "cheerio"){
-					if (aabb1.intersectsBox(aabb2)){
-						node.vx = object.vx;
-						node.vx = object.vx;
-					}
-					node.vx -= node.vx*time * Math.cos(object.angle);
-					node.vx -= node.vx*time * Math.sin(object.angle);
-					node.translateX(node.vx);
-					node.translateY(node.vy);
-
-					aabb2.makeEmpty();
-				}
-
 			}
 		});
 	}
-	// if (object.category == "cheerio"){
-	// 	scene.traverse(function(node) {
-	// 		aabb2 = new THREE.Box3().setFromObject(node);
-	// 		if (object != node && node.category == "cheerio"){
-	// 			if (aabb1.intersectsBox(aabb2)){
-	// 				if (node.vx == 0 && node.y == 0){ // o node está parado e o object esta a andar
-	// 					difX = (node.x - object.x);
-	// 					difY = (node.y - object.y);
-	//
-	// 				}
-	// 				else if (object.vx && object.vy == 0){ // o object esta parado e o node esta a andar
-	// 					difX = (object.x - node.x);
-	// 					difY = (object.y - node.y);
-	// 				}
-	//
-	//
-	// 			}
-	// 		}
-	// 	}
-	// });
-	aabb1.makeEmpty();
-
-}
+	}
 }

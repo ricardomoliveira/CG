@@ -61,6 +61,7 @@ function createCar(x, y, z){
 	  car.category = "car";
 	  car.r = Math.sqrt((15^2) + (7.5^2));
 
+
     createWheel(chassis, -x/2 + 5, y/2, 1);
     createWheel(chassis, x/2 - 5, y/2, 1);
     createWheel(chassis, x/2 - 5, -y/2, 1);

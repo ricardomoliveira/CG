@@ -29,21 +29,28 @@ function createStart() {
   scene.add(start);
 
 }
+
 function createCheerio(x, y){
     'use strict';
 
-    var geometry = new THREE.TorusBufferGeometry(12, 2.5, 8, 100);
+	var cheerio = new THREE.Object3D();
+    var geometry = new THREE.TorusBufferGeometry(12, 2.5, 8, 10);
     var material = new THREE.MeshBasicMaterial({color: 0x000000});
     var torus = new THREE.Mesh(geometry, material);
-    torus.position.x = x;
-    torus.position.y = y;
-    torus.position.z = 1;
+	cheerio.add(torus);
 
-	   torus.vx = 0;
-	    torus.vy = 0;
-	     torus.acceleration = 7;
+    cheerio.position.x = x;
+    cheerio.position.y = y;
+    cheerio.position.z = 1;
 
-    scene.add(torus);
+	cheerio.vx = 0;
+	cheerio.vy = 0;
+	cheerio.acceleration = 5;
+	cheerio.category = "cheerio";
+	cheerio.mass = 10;
+	cheerio.r = 20;
+
+    scene.add(cheerio);
 }
 
 function createCircularTrack(r1, r2, x, y, flag){
@@ -91,6 +98,10 @@ function createOrange(x,y) {
 	leaf.translateZ(30);
 	leaf.rotation.x += 10;
 
+  var axisHelper = new THREE.AxisHelper( 200 );
+  orange.leaf = leaf;
+  orange.add( axisHelper );
+
 	orange.add(leaf);
 
 	orange.translateX(x);
@@ -102,6 +113,7 @@ function createOrange(x,y) {
 	orange.vx = 0;
 	orange.r = 30;
 
+  orange.collision = true;
 
   scene.add(orange);
 }
@@ -109,15 +121,20 @@ function createOrange(x,y) {
 function createButter(x,y) {
   'use strict';
 
-  geometry = new THREE.BoxGeometry(80, 50, 50);
-  material = new THREE.MeshBasicMaterial( {color: 0xFFFF80, wireframe: false} );
-  var butter = new THREE.Mesh(geometry, material);
+	  var butter = new THREE.Object3D();
+  	geometry = new THREE.BoxGeometry(80, 80, 20);
+  	material = new THREE.MeshBasicMaterial( {color: 0xFFFF80, wireframe: false} );
+  	mesh = new THREE.Mesh(geometry, material);
 
-	butter.position.set(x,y,0);
-	butter.category = "butter";
-	butter.r = Math.sqrt((40^2) + (25^2));
+	  butter.add(mesh);
 
-  scene.add(butter);
+    butter.position.set(x,y,0);
+	  butter.category = "butter";
+	  butter.r = Math.sqrt(3300);
+
+    butter.translateZ(10);
+
+  	scene.add(butter);
 }
 
 function createTrack() {
