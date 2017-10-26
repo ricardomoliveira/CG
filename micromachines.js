@@ -59,7 +59,7 @@ function createCamera(){
 
 		ChaseCamera= new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 3500);
 		BackCamera= new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 3500);
-        OrthoCamera = new THREE.OrthographicCamera(-1100, 1100, 750, -750, 0.1, 150);
+        OrthoCamera = new THREE.OrthographicCamera(-1300, 1300, 790, -790, 0.1, 150);
         // if (window.innerHeight / window.innerWidth  < ratioMesa){
 		//       OrthoCamera = new THREE.OrthographicCamera(-window.innerWidth, window.innerWidth, window.innerHeight, -window.innerHeight, 0.1, 150);
         // }
