@@ -5,8 +5,8 @@ var car = {
 		angle: 0,
 		vy: 0,
 		drag: 0,
-		previousX: 0,
-		previousY: 0,
+		//previousX: 0,
+		//previousY: 0,
 		r: 0
 };
 
@@ -41,7 +41,7 @@ function addTop(car, x, y, z){
     material = new THREE.MeshBasicMaterial( {color: 0xff2800, wireframe: false} );
     var top = new THREE.Mesh(geometry, material);
 
-	  top.position.z = 2;
+	top.position.z = 2;
     car.add(top); // Adiciona ao carro uma parte de cima
 }
 
@@ -51,15 +51,15 @@ function createCar(x, y, z){
     var chassis, top, acceleration;
 
     chassis = new THREE.Object3D();
-	  car = new THREE.Object3D();
+	car = new THREE.Object3D();
 
-	  car.vx = 0; /* Velocidade eixo x */
-	  car.vy = 0; /* Velocidade eixo y */
-	  car.acceleration = 10; /* Aceleração pré-definida do carro */
-	  car.drag = 0.99; /* Atrito entre o carro e a pista */
-	  car.angle = 0; /* Ângulo de direção do carro */
-	  car.category = "car";
-	  car.r = Math.sqrt(281.25);
+	car.vx = 0; /* Velocidade eixo x */
+	car.vy = 0; /* Velocidade eixo y */
+	car.acceleration = 10; /* Aceleração pré-definida do carro */
+	car.drag = 0.99; /* Atrito entre o carro e a pista */
+	car.angle = 0; /* Ângulo de direção do carro */
+	car.category = "car";
+	car.r = Math.sqrt(281.25);  //Raio da 'bounding sphere' imaginária, sqrt(15^2 + 7,5^2)
 
 
     createWheel(chassis, -x/2 + 5, y/2, 1);
@@ -69,12 +69,12 @@ function createCar(x, y, z){
 
     addTop(car, x, y, z);
 
-	  car.add( ChaseCamera );
+	car.add( ChaseCamera ); //Faz sentido mas como se explica? ?????
 
     car.add(chassis);
 
-	  car.position.z = 7;
+	car.position.z = 7;
 
-	  scene.add(car);
+	scene.add(car);
 
 }
