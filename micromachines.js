@@ -59,7 +59,11 @@ function createCamera(){
 
 		ChaseCamera= new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 3500);
 		BackCamera= new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 3500);
-		OrthoCamera = new THREE.OrthographicCamera(-window.innerWidth, window.innerWidth, window.innerHeight, -window.innerHeight, 0.1, 150);
+        OrthoCamera = new THREE.OrthographicCamera(-1100, 1100, 750, -750, 0.1, 150);
+        // if (window.innerHeight / window.innerWidth  < ratioMesa){
+		//       OrthoCamera = new THREE.OrthographicCamera(-window.innerWidth, window.innerWidth, window.innerHeight, -window.innerHeight, 0.1, 150);
+        // }
+        // else { OrthoCamera = new THREE.OrthographicCamera(-1250, 1250, 750, -750, 0.1, 150); }
 
 		BackCamera.position.y = -1500;
 		BackCamera.position.z = 1000;
@@ -180,7 +184,7 @@ function onResize(){
 	if (activeCamera == 2) {
 
 		renderer.setSize(window.innerWidth, window.innerHeight);
-	
+
 
 		if (window.innerHeight > window.innerWidth) {
 			BackCamera.aspect = window.innerHeight / window.innerWidth;
@@ -301,28 +305,24 @@ function movement(object,time) {
 
 function position(object) {
 	if (object.category == "orange") {
-        scene.traverse(function(node) {
-            if (node.category == "table"){
-                if (object.position.x >= node.r1) {
-                    object.visible = false; // Remove laranja de cena
-                    object.collision = false;
-                }
-    		}
+		if (object.position.x >= 1250) {
+			object.visible = false; // Remove laranja de cena
+			object.collision = false;
+		}
 
-    		if (object.position.x >= node.r2) {
-    			object.vx = 0;
-    			object.position.x = Math.floor(Math.random() * 1200) - 1200 ;
-    			object.position.y = Math.floor(Math.random() * 700) - 700 ;
+		if (object.position.x >= 2500) {
+			object.vx = 0;
+			object.position.x = Math.floor(Math.random() * 1200) - 1200 ;
+			object.position.y = Math.floor(Math.random() * 700) - 700 ;
 
-    			setTimeout(function () {
-    				object.visible = true;
-    				object.collision = true;
-    			}, Math.floor(Math.random() * 5000) + 2000);
-    		}
-        });
-    }
+			setTimeout(function () {
+				object.visible = true;
+				object.collision = true;
+			}, Math.floor(Math.random() * 5000) + 2000);
+		}
+	}
 
-	else if (object.category == "car") {
+	if (object.category == "car") {
 		if (object.position.x >= 1250 || object.position.x <= -1250 || object.position.y >= 750 || object.position.y <= -750) {
 			object.visible = false; // Remove laranja de cena
 		}

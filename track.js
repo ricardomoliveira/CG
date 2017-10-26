@@ -103,7 +103,7 @@ function createOrange(x,y) {
 
   var axisHelper = new THREE.AxisHelper( 200 );
   orange.leaf = leaf;
-  orange.add( axisHelper );
+  //orange.add( axisHelper );
 
 	orange.add(leaf);
 
