@@ -1,10 +1,10 @@
 /* global THREE */
 
-var scene, renderer, activeCamera, OrthoCamera, ChaseCamera, BackCamera, geometry, material, mesh, clock, table;
+var scene, renderer, activeCamera, OrthoCamera, ChaseCamera, BackCamera, geometry, material, mesh, clock, table, pointlights = [];
 
 var ratioMesa = 1500/2500; // Altura da mesa / Comprimento da mesa : assegura o rácio de aspeto desta
 
-var wrfrm = false; // Atributo de wireframe dos objetos
+var wrfrm = false, candleLight = false; // Atributo de wireframe dos objetos
 
 var driving = false;
 
@@ -96,6 +96,14 @@ function onKeyDown(e) {
 			wrfrm = true;
 		else
 			wrfrm = false;
+    }
+
+    if (e.keycode == 99 || e.keycode == 67){
+        if (candleLight == false){
+            candleLight = true;
+        }
+        else
+            candleLight = false;
     }
 
     if (e.keyCode == 38) // Tecla Cima
@@ -220,10 +228,11 @@ function onResize(){
 
 }
 
-function update()
-{
-	var delta = clock.getDelta();
+function update(){
+    'use strict'
+    var delta = clock.getDelta();
 
+    updateCandles();
 	scene.traverse(function(node) {
 		if (node instanceof THREE.Mesh) {
 			node.material.wireframe = wrfrm;
@@ -234,6 +243,21 @@ function update()
 			collision(node, delta);
 		}
 	});
+}
+
+function updateCandles(){
+    'use strict'
+    if (candleLight == false){
+		for (var p = 0; p < pointlights.length; p++) {
+			scene.add(pointlights[p]);
+		}
+	}
+	if (candleLight == true) {
+		for (p = 0; p < pointlights.length; p++) {
+			scene.remove(pointlights[p]);
+		}
+	}
+}
 
 function movement(object,time) {
 	'use strict';
@@ -380,10 +404,10 @@ function collision(object, time){
 
 						dx = (node.position.x - object.position.x) / Math.abs(node.position.x - object.position.x);
 						dy = (node.position.y - object.position.y) / Math.abs(node.position.y - object.position.y);
-						node.vx = object.vx * 0.4;
-						node.vy = object.vy * 0.4;
-						node.translateX(dx * (node.vx + 0.5 * node.acceleration));
-						node.translateY(dy * (node.vy + 0.5 * node.acceleration));
+						node.vx = object.vx ;
+						node.vy = object.vy ;
+						node.translateX(dx * (node.vx + 0.5 * node.acceleration * time * time));
+						node.translateY(dy * (node.vy + 0.5 * node.acceleration * time * time));
 					}
 				}
 
@@ -409,13 +433,11 @@ function collision(object, time){
 	                var dy = (node.position.y - object.position.y) / Math.abs(node.position.y - object.position.y);
 	                node.vx = object.vx * 0.5;
 	                node.vy = object.vy * 0.5;
-	                node.translateX(dx * (node.vx + 0.5 * node.acceleration));
-	                node.translateY(dy * (node.vy + 0.5 * node.acceleration));
+	                node.translateX(dx * (node.vx + 0.5 * node.acceleration ));
+	                node.translateY(dy * (node.vy + 0.5 * node.acceleration ));
 
 	            }
 	        }
 	    });
-	}
-
 	}
 }

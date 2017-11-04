@@ -126,7 +126,7 @@ function createButter(x,y) {
 
 	  var butter = new THREE.Object3D();
   	geometry = new THREE.BoxGeometry(80, 80, 20);
-  	material = new THREE.MeshBasicMaterial( {color: 0xFFFF80, wireframe: false} );
+  	material = new THREE.MeshBasicMaterial( {color: 0xFFD700, wireframe: false} );
   	mesh = new THREE.Mesh(geometry, material);
 
 	  butter.add(mesh);
@@ -140,11 +140,39 @@ function createButter(x,y) {
   	scene.add(butter);
 }
 
+function createCandle(x,y) {
+  'use strict';
+
+	var candle = new THREE.Object3D();
+  	geometry = new THREE.BoxGeometry(20, 20, 60);
+  	material = new THREE.MeshBasicMaterial( {color: 0xFFDEAD, wireframe: false} );
+  	mesh = new THREE.Mesh(geometry, material);
+
+	  candle.add(mesh);
+
+    candle.position.set(x,y,0);
+	  candle.category = "candle";
+
+    candle.translateZ(30);
+
+  	scene.add(candle);
+
+    var light = new THREE.PointLight( 0xFFFFFF, 1, 60 );
+    light.position.set(x, y, 90);
+    pointlights.push(light);
+}
+
 function createTrack() {
 
   createStart();
   createCircularTrack(350, 150, 300, 0, 1); // Cria a pista da esquerda
   createCircularTrack(350, 150, -300, 0, -1); // Cria a pista da direita
+  createCandle(0, 300);
+  createCandle(0, -300);
+  createCandle(650, -250);
+  createCandle(650, 250);
+  createCandle(-650, 250);
+  createCandle(-650, -250);
 
   for (var i = 1; i <= 3; i++) {
     createOrange(Math.floor(Math.random() * 500) - 500, Math.floor(Math.random() * 500) - 500);
