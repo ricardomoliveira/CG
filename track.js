@@ -87,24 +87,26 @@ function createCheerioCircle(radius, x, y, flag1, flag2){
 }
 
 function createOrange(x,y) {
-  'use strict';
+	'use strict';
 
+	//Criação da laranja
 	var orange = new THREE.Object3D();
 	geometry = new THREE.SphereGeometry(30, 20, 20);
 	material = new THREE.MeshBasicMaterial( { color: 0xFFA500, wireframe: false});
 	mesh = new THREE.Mesh( geometry, material );
 	orange.add(mesh);
 
+	//Criação da folha
 	geometry = new THREE.BoxGeometry(10, 10, 2);
-  	material = new THREE.MeshBasicMaterial({ color: 0x008000, wireframe: false});
-  	var leaf = new THREE.Mesh( geometry, material );
+	material = new THREE.MeshBasicMaterial({ color: 0x008000, wireframe: false});
+	var leaf = new THREE.Mesh( geometry, material );
 	leaf.translateZ(30);
 	leaf.rotation.x += 10;
 
-  var axisHelper = new THREE.AxisHelper( 200 );
-  orange.leaf = leaf;
-  //orange.add( axisHelper );
+	//var axisHelper = new THREE.AxisHelper( 200 );
+	//orange.add( axisHelper );
 
+	orange.leaf = leaf;
 	orange.add(leaf);
 
 	orange.translateX(x);
@@ -112,28 +114,28 @@ function createOrange(x,y) {
 	orange.translateZ(25);
 
 	orange.category = "orange";
-	orange.acceleration = Math.floor(Math.random() * 3) + 1;
+	orange.acceleration = Math.floor(Math.random() * 3) + 1; //Não entendi ??????
 	orange.vx = 0;
-	orange.r = 30;
+	orange.r = 30;  //Raio da 'bounding sphere' imaginária, neste caso a própria laranja
 
-  orange.collision = true;
+	orange.collision = true; //Não entendi ???????
 
-  scene.add(orange);
+	scene.add(orange);
 }
 
 function createButter(x,y) {
   'use strict';
 
-	  var butter = new THREE.Object3D();
+	var butter = new THREE.Object3D();
   	geometry = new THREE.BoxGeometry(80, 80, 20);
   	material = new THREE.MeshBasicMaterial( {color: 0xFFD700, wireframe: false} );
   	mesh = new THREE.Mesh(geometry, material);
 
-	  butter.add(mesh);
+	butter.add(mesh);
 
     butter.position.set(x,y,0);
-	  butter.category = "butter";
-	  butter.r = Math.sqrt(2400);
+	butter.category = "butter";
+	butter.r = Math.sqrt(2400); //Raio da 'bounding sphere' imaginária 
 
     butter.translateZ(10);
 
