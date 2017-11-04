@@ -5,8 +5,6 @@ var car = {
 		angle: 0,
 		vy: 0,
 		drag: 0,
-		//previousX: 0,
-		//previousY: 0,
 		r: 0
 };
 
@@ -69,7 +67,7 @@ function createCar(x, y, z){
 
     addTop(car, x, y, z);
 
-	car.add( ChaseCamera ); //Faz sentido mas como se explica? ?????
+	   car.add( ChaseCamera ); // A camara faz parte do grafo de cena do carro, logo sofre todas as transformações deste
 
     car.add(chassis);
 
