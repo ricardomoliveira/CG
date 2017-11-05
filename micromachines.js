@@ -1,6 +1,6 @@
 /* global */
 
-var scene, renderer, ableToChange, activeMaterial, directionalLight, candleLight, activeCamera, activeLight, OrthoCamera, ChaseCamera, BackCamera, geometry, material, mesh, clock, table, pointlights = [];
+var scene, renderer, ableToChange, activeMaterial, directionalLight, candleLight, activeCamera, activeLight, OrthoCamera, ChaseCamera, BackCamera, geometry, material, mesh, clock, table;
 
 var ratioMesa = 1500/2500; // Altura da mesa / Comprimento da mesa : assegura o rácio de aspeto desta
 
@@ -13,7 +13,7 @@ function init() {
      activeLight = true; //Define a 1 que é dia e a 0 que é noite
      activeMaterial = 1;
      ableToChange = true;
-     candleLight = false;
+     candleLight = true;
 
 	   clock =  new THREE.Clock();
 
@@ -121,7 +121,7 @@ function onKeyDown(e) {
 
 function onKeyPressed(e) {
 	if (e.keyCode == 49) {
-			activeCamera = 1;
+		activeCamera = 1;
 	}
 
 	if (e.keyCode == 50) {
@@ -137,11 +137,9 @@ function onKeyPressed(e) {
   }
 
   if (e.keycode == 99 || e.keycode == 67){
-      if (candleLight == false){
-          candleLight = true;
+      if (ableToChange){
+          candleLight = !candleLight;
       }
-      else
-          candleLight = false;
   }
 
   if (e.keyCode == 71 || e.keyCode == 103) {
@@ -252,44 +250,50 @@ function update(){
     'use strict'
     var delta = clock.getDelta();
 
-    updateCandles();
+    // updateCandles();
 	scene.traverse(function(node) {
 		if (node instanceof THREE.Mesh) {
 			node.material.wireframe = wrfrm;
-      changeMaterial(node);
+            changeMaterial(node);
 		}
 
 		if(node instanceof THREE.Object3D && node!=null) {
 			position(node);
 			movement(node, delta);
 			collision(node);
-
-      if (node.isDirectionalLight) {
-        if (activeLight) {
-          node.intensity = 1;
         }
-        else {
-          node.intensity = 0;
+        if (node.isDirectionalLight) {
+            if (activeLight) {
+                node.intensity = 1;
+            }
+            else {
+                node.intensity = 0;
+            }
         }
-      }
-
-		}
-	});
+        if (node.isPointLight){
+            if (candleLight) {
+                node.intensity = 1;
+            }
+            else {
+                node.intensity = 0;
+            }
+        }
+    });
 }
 
-function updateCandles(){
-    'use strict'
-    if (candleLight == false){
-		for (var p = 0; p < pointlights.length; p++) {
-			scene.add(pointlights[p]);
-		}
-	}
-	if (candleLight == true) {
-		for (p = 0; p < pointlights.length; p++) {
-			scene.remove(pointlights[p]);
-		}
-	}
-}
+// function updateCandles(){
+//     'use strict'
+//     if (candleLight == false){
+// 		for (var p = 0; p < pointlights.length; p++) {
+// 			scene.remove(pointlights[p]);
+// 		}
+// 	}
+// 	if (candleLight == true) {
+// 		for (p = 0; p < pointlights.length; p++) {
+// 			scene.add(pointlights[p]);
+// 		}
+// 	}
+// }
 
 function movement(object, time) {
 	'use strict';

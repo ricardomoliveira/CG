@@ -135,7 +135,7 @@ function createButter(x,y) {
 
     butter.position.set(x,y,0);
 	butter.category = "butter";
-	butter.r = Math.sqrt(2400); //Raio da 'bounding sphere' imaginária 
+	butter.r = Math.sqrt(2400); //Raio da 'bounding sphere' imaginária
 
     butter.translateZ(10);
 
@@ -159,9 +159,9 @@ function createCandle(x,y) {
 
   	scene.add(candle);
 
-    var light = new THREE.PointLight( 0xFFFFFF, 1, 60 );
+    var light = new THREE.PointLight( 0xFFFFFF, 1, 380);
     light.position.set(x, y, 90);
-    pointlights.push(light);
+    scene.add(light);
 }
 
 function createTrack() {
