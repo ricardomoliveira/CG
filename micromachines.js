@@ -9,7 +9,7 @@ var wrfrm = false; // Atributo de wireframe dos objetos
 function init() {
     'use strict';
 
-	   activeCamera = 1; //Definimos que a camara a utilizar no inicio do jogo é a camara 1, a ortográfica
+	 activeCamera = 1; //Definimos que a camara a utilizar no inicio do jogo é a camara 1, a ortográfica
      activeLight = true; //Define a 1 que é dia e a 0 que é noite
      activeMaterial = 1;
      ableToChange = true;
@@ -22,11 +22,11 @@ function init() {
      document.body.appendChild(renderer.domElement);
 
      createScene();
-	   createTrack();
-	   createCamera();
+	 createTrack();
+	 createCamera();
      createLights();
 
-     createCar(30, 15, 7);
+     createCar(0,0,0);
 
      window.addEventListener( 'resize', onResize); // Deteta os eventos de alteração de tamanho da janela
      window.addEventListener( 'keydown', onKeyDown, false ); // Deteta os eventos de tecla a ser premida

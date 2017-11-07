@@ -16,7 +16,7 @@ var move = {
 };
 
 
-function createWheel(obj, x, y, z){
+/*function createWheel(obj, x, y, z){
     'use strict';
 
     geometry = new THREE.TorusBufferGeometry(2, 2, 8, 100);
@@ -35,21 +35,42 @@ function createWheel(obj, x, y, z){
 function addTop(car, x, y, z){
     'use strict'
 
-    geometry = new THREE.BoxGeometry(x, y, z);
     material = new THREE.MeshBasicMaterial( {color: 0xff2800, wireframe: false} );
     var top = new THREE.Mesh(geometry, material);
 
 	top.position.z = 2;
     car.add(top); // Adiciona ao carro uma parte de cima
-}
+
+
+    geometry.faces.push(new THREE.Face3(0,1,2));		//Front Face
+	    geometry.faces.push(new THREE.Face3(0,2,3));
+
+	    geometry.faces.push(new THREE.Face3(4,6,5));		//Back Face
+	    geometry.faces.push(new THREE.Face3(7,6,4));
+
+	    geometry.faces.push(new THREE.Face3(3,2,6));//Top Face
+    	geometry.faces.push(new THREE.Face3(3,6,7));
+
+    	geometry.faces.push(new THREE.Face3(0,4,5));//Bottom Face
+    	geometry.faces.push(new THREE.Face3(0,5,1));
+
+    	geometry.faces.push(new THREE.Face3(1,5,6));//Right Face
+    	geometry.faces.push(new THREE.Face3(1,6,2));
+
+    	geometry.faces.push(new THREE.Face3(0,3,7));//left Face
+    	geometry.faces.push(new THREE.Face3(0,7,4));
+
+}*/
+
 
 function createCar(x, y, z){
     'use strict'
 
-    var chassis, top, acceleration;
+    var acceleration;
 
-    chassis = new THREE.Object3D();
 	car = new THREE.Object3D();
+
+	car.add( ChaseCamera ); // A camara fa7 parte do grafo de cena do carro, logo sofre todas as transformações deste
 
 	car.vx = 0; /* Velocidade eixo x */
 	car.vy = 0; /* Velocidade eixo y */
@@ -60,18 +81,56 @@ function createCar(x, y, z){
 	car.r = Math.sqrt(281.25);  //Raio da 'bounding sphere' imaginária, sqrt(15^2 + 7,5^2)
 
 
-    createWheel(chassis, -x/2 + 5, y/2, 1);
-    createWheel(chassis, x/2 - 5, y/2, 1);
-    createWheel(chassis, x/2 - 5, -y/2, 1);
-    createWheel(chassis, -x/2 + 5, -y/2, 1);
+	geometry = new THREE.Geometry();
+	geometry.vertices.push(
+    	new THREE.Vector3(15, -7.5, 0), //0
+    	new THREE.Vector3(-15, -7.5, 0 ), //1
+    	new THREE.Vector3(-15, -7.5, 7), //2
+    	new THREE.Vector3(15,-7.5, 7), //3
 
-    addTop(car, x, y, z);
+    	new THREE.Vector3(-15, 7.5, 0), //4
+    	new THREE.Vector3(-15, 7.5, 7), //5
+    	new THREE.Vector3(15, 7.5, 0), //6
+    	new THREE.Vector3(15, 7.5, 7) //7
+    )
 
-	   car.add( ChaseCamera ); // A camara faz parte do grafo de cena do carro, logo sofre todas as transformações deste
+	geometry.faces.push(new THREE.Face3(0,1,2));//face da frente
+    geometry.faces.push(new THREE.Face3(0,2,3));
 
-    car.add(chassis);
+    geometry.faces.push(new THREE.Face3(4,6,5));//face de tras caso regra da mao direita
+    geometry.faces.push(new THREE.Face3(6,5,7));
 
-	car.position.z = 7;
+    /*geometry.faces.push(new THREE.Face3(6,5,4)); //face de tras caso regra da mao esquerda (de nao estar visivel, idk)
+    geometry.faces.push(new THREE.Face3(6,7,5));*/
+
+	geometry.faces.push(new THREE.Face3(0,6,7));//face do lado direito
+	geometry.faces.push(new THREE.Face3(0,7,3));
+
+	geometry.faces.push(new THREE.Face3(1,4,5));//face do lado esquerdo
+	geometry.faces.push(new THREE.Face3(1,5,2));
+
+	geometry.faces.push(new THREE.Face3(3,7,5));//face de cima
+	geometry.faces.push(new THREE.Face3(3,5,2));
+
+	geometry.faces.push(new THREE.Face3(0,6,4));//face de baixo
+	geometry.faces.push(new THREE.Face3(0,4,1));
+
+    /*geometry.faces.push(new THREE.Face3(6,0,4)); //face de baixo caso regra da mao esquerda (de nao estar visivel, idk)
+    geometry.faces.push(new THREE.Face3(0,1,4));*/	
+
+
+    geometry.computeFaceNormals();
+    
+    var basicmat = new THREE.MeshBasicMaterial( { color: 0xff2800, wireframe: false});
+    var lambertmat = new THREE.MeshLambertMaterial( { color: 0xff2800, wireframe: false});
+    var phongmat = new THREE.MeshPhongMaterial( { color: 0xff2800, wireframe: false});
+    var carmaterial = lambertmat;
+
+    var carmesh = new THREE.Mesh(geometry, carmaterial);
+
+	car.add(carmesh);
+
+	car.position.set(x,y,z);
 
 	scene.add(car);
 
