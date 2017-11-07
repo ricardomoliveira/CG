@@ -16,51 +16,60 @@ var move = {
 };
 
 
-/*function createWheel(obj, x, y, z){
+function createWheel(obj, x, y, z){
     'use strict';
 
-    geometry = new THREE.TorusBufferGeometry(2, 2, 8, 100);
-    material = new THREE.MeshBasicMaterial({color: 0x000000, wireframe: false} );
-    var torus = new THREE.Mesh(geometry, material);
+    geometry = new THREE.Geometry();
+    geometry.vertices.push(
+        new THREE.Vector3(1,0,0), //centro da parte da frente
 
-    torus.position.x = x;
-    torus.position.y = y;
-    torus.position.z = z;
+        new THREE.Vector3(1, -1, -1.75), //1
+        new THREE.Vector3(1, -2, 0 ), //2
+        new THREE.Vector3(1, -1, 1.75), //3
+        new THREE.Vector3(1, 1, 1.75), //4
+        new THREE.Vector3(1, 2, 0), //5
+        new THREE.Vector3(1, 1, -1.75), //6
 
-    torus.rotation.x = Math.PI/2;
+        new THREE.Vector3(-1, 0, 0), //centro da parte de tras
 
-    obj.add(torus);
+        new THREE.Vector3(-1, -1, -1.75), //8
+        new THREE.Vector3(-1, -2, 0), //9
+        new THREE.Vector3(-1, -1, 1.75), //10
+        new THREE.Vector3(-1, 1, 1.75), //11
+        new THREE.Vector3(-1, 2, 0), //12
+        new THREE.Vector3(-1, 1, -1.75) //13
+
+    )
+
+    geometry.faces.push(new THREE.Face3(0,1,2));//parte da frente da roda
+    geometry.faces.push(new THREE.Face3(0,2,3));
+    geometry.faces.push(new THREE.Face3(0,3,4));
+    geometry.faces.push(new THREE.Face3(0,4,5));
+    geometry.faces.push(new THREE.Face3(0,5,6));
+    geometry.faces.push(new THREE.Face3(0,6,1));
+
+    geometry.faces.push(new THREE.Face3(7,8,9));
+    geometry.faces.push(new THREE.Face3(7,9,10));
+    geometry.faces.push(new THREE.Face3(7,10,11));
+    geometry.faces.push(new THREE.Face3(7,11,12));
+    geometry.faces.push(new THREE.Face3(7,12,13));
+    geometry.faces.push(new THREE.Face3(7,13,8));
+
+    geometry.computeFaceNormals();
+
+    var basicmat = new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: false});
+    var lambertmat = new THREE.MeshLambertMaterial( { color: 0x000000, wireframe: false});
+    var phongmat = new THREE.MeshPhongMaterial( { color: 0x000000, wireframe: false});
+    var wheelmaterial = lambertmat;
+
+    var wheelmesh = new THREE.Mesh(geometry, wheelmaterial);
+
+    wheelmesh.position.set(x,y,z);
+
+    wheelmesh.rotation.x = Math.PI/2;
+
+    obj.add(wheelmesh);
 }
-
-function addTop(car, x, y, z){
-    'use strict'
-
-    material = new THREE.MeshBasicMaterial( {color: 0xff2800, wireframe: false} );
-    var top = new THREE.Mesh(geometry, material);
-
-	top.position.z = 2;
-    car.add(top); // Adiciona ao carro uma parte de cima
-
-
-    geometry.faces.push(new THREE.Face3(0,1,2));		//Front Face
-	    geometry.faces.push(new THREE.Face3(0,2,3));
-
-	    geometry.faces.push(new THREE.Face3(4,6,5));		//Back Face
-	    geometry.faces.push(new THREE.Face3(7,6,4));
-
-	    geometry.faces.push(new THREE.Face3(3,2,6));//Top Face
-    	geometry.faces.push(new THREE.Face3(3,6,7));
-
-    	geometry.faces.push(new THREE.Face3(0,4,5));//Bottom Face
-    	geometry.faces.push(new THREE.Face3(0,5,1));
-
-    	geometry.faces.push(new THREE.Face3(1,5,6));//Right Face
-    	geometry.faces.push(new THREE.Face3(1,6,2));
-
-    	geometry.faces.push(new THREE.Face3(0,3,7));//left Face
-    	geometry.faces.push(new THREE.Face3(0,7,4));
-
-}*/
 
 
 function createCar(x, y, z){
@@ -124,6 +133,11 @@ function createCar(x, y, z){
 	car.add(carmesh);
 
 	car.position.set(x,y,z);
+
+    createWheel(car, 12.5, 7.4, 2);
+    createWheel(car, 12.5, -7.4, 2);
+    createWheel(car, -12.5, 7.4, 2);
+    createWheel(car, -12.5, -7.4, 2);
 
 	scene.add(car);
 
