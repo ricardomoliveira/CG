@@ -1,6 +1,6 @@
 /* global */
 
-var scene, renderer, ableToChange, activeMaterial, directionalLight, candleLight, activeCamera, activeLight, OrthoCamera, ChaseCamera, BackCamera, geometry, material, mesh, clock, table, pointlights = [];
+var scene, renderer, candleLight, ableToChange, activeMaterial, directionalLight, candleLight, activeCamera, activeLight, OrthoCamera, ChaseCamera, BackCamera, geometry, material, mesh, clock, table, pointlights = [];
 
 var ratioMesa = 1500/2500; // Altura da mesa / Comprimento da mesa : assegura o rácio de aspeto desta
 
@@ -13,7 +13,7 @@ function init() {
      activeLight = true; //Define a 1 que é dia e a 0 que é noite
      activeMaterial = 1;
      ableToChange = true;
-     candleLight = false;
+     candleLight = true;
 
 	   clock =  new THREE.Clock();
 
@@ -136,12 +136,8 @@ function onKeyPressed(e) {
     activeLight = !activeLight;
   }
 
-  if (e.keycode == 99 || e.keycode == 67){
-      if (candleLight == false){
-          candleLight = true;
-      }
-      else
-          candleLight = false;
+  if (e.keycode == 67 || e.keycode == 99) {
+    candleLight = !candleLight;
   }
 
   if (e.keyCode == 71 || e.keyCode == 103) {
@@ -252,8 +248,8 @@ function update(){
     'use strict'
     var delta = clock.getDelta();
 
-    updateCandles();
-	scene.traverse(function(node) {
+    scene.traverse(function(node) {
+
 		if (node instanceof THREE.Mesh) {
 			node.material.wireframe = wrfrm;
       changeMaterial(node);
@@ -273,22 +269,17 @@ function update(){
         }
       }
 
+      if (node.isPointLight) {
+        if (candleLight) {
+          node.power = 1;
+        }
+        else {
+          node.power = 0;
+        }
+      }
+
 		}
 	});
-}
-
-function updateCandles(){
-    'use strict'
-    if (candleLight == false){
-		for (var p = 0; p < pointlights.length; p++) {
-			scene.add(pointlights[p]);
-		}
-	}
-	if (candleLight == true) {
-		for (p = 0; p < pointlights.length; p++) {
-			scene.remove(pointlights[p]);
-		}
-	}
 }
 
 function movement(object, time) {
@@ -485,6 +476,31 @@ function createLights() {
   var directionalLight = new THREE.DirectionalLight( 0xffffff, 1);
 	directionalLight.position.set( 0, 0, 50 );
   scene.add(directionalLight);
+
+  var light1 = new THREE.PointLight( 0xFFFFFF, 1, 600 );
+  light1.position.set(0, 300, 150);
+  scene.add(light1);
+
+  var light2 = new THREE.PointLight( 0xFFFFFF, 1, 600 );
+  light2.position.set(0, -300, 150);
+  scene.add(light2);
+
+  var light3 = new THREE.PointLight( 0xFFFFFF, 1, 600 );
+  light3.position.set(650, -250, 150);
+  scene.add(light3);
+
+  var light4 = new THREE.PointLight( 0xFFFFFF, 1, 600 );
+  light4.position.set(650, 250, 150);
+  scene.add(light4);
+
+  var light5 = new THREE.PointLight( 0xFFFFFF, 1, 600 );
+  light5.position.set(-650, 250, 150);
+  scene.add(light5);
+
+  var light6 = new THREE.PointLight( 0xFFFFFF, 1, 600 );
+  light6.position.set(-650, -250, 150);
+  scene.add(light6);
+
 }
 
 

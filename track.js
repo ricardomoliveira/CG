@@ -135,7 +135,7 @@ function createButter(x,y) {
 
     butter.position.set(x,y,0);
 	butter.category = "butter";
-	butter.r = Math.sqrt(2400); //Raio da 'bounding sphere' imaginária 
+	butter.r = Math.sqrt(2400); //Raio da 'bounding sphere' imaginária
 
     butter.translateZ(10);
 
@@ -146,7 +146,7 @@ function createCandle(x,y) {
   'use strict';
 
 	var candle = new THREE.Object3D();
-  	geometry = new THREE.BoxGeometry(20, 20, 60);
+  	geometry = new THREE.BoxGeometry(10, 10, 10);
   	material = new THREE.MeshBasicMaterial( {color: 0xFFDEAD, wireframe: false} );
   	mesh = new THREE.Mesh(geometry, material);
 
@@ -155,13 +155,15 @@ function createCandle(x,y) {
     candle.position.set(x,y,0);
 	  candle.category = "candle";
 
-    candle.translateZ(30);
+    candle.translateZ(5);
+
+    var light1 = new THREE.PointLight( 0xFFFFFF, 1, 600 );
+    light1.position.set(x, y, 150);
+    candle.add(light1);
 
   	scene.add(candle);
 
-    var light = new THREE.PointLight( 0xFFFFFF, 1, 60 );
-    light.position.set(x, y, 90);
-    pointlights.push(light);
+
 }
 
 function createTrack() {
