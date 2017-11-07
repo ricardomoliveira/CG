@@ -1,10 +1,6 @@
 /* global */
 
-<<<<<<< HEAD
-var scene, renderer, candleLight, ableToChange, activeMaterial, directionalLight, candleLight, activeCamera, activeLight, OrthoCamera, ChaseCamera, BackCamera, geometry, material, mesh, clock, table, pointlights = [];
-=======
-var scene, renderer, ableToChange, activeMaterial, directionalLight, candleLight, activeCamera, activeLight, OrthoCamera, ChaseCamera, BackCamera, geometry, material, mesh, clock, table;
->>>>>>> 788332d520da2f86cb2bdd7dd1a01943e2b5dee2
+var scene, p, renderer, candleLight, ableToChange, activeMaterial, directionalLight, candleLight, activeCamera, activeLight, OrthoCamera, ChaseCamera, BackCamera, geometry, material, mesh, clock, table, pointlights = [];
 
 var ratioMesa = 1500/2500; // Altura da mesa / Comprimento da mesa : assegura o rácio de aspeto desta
 
@@ -13,7 +9,7 @@ var wrfrm = false; // Atributo de wireframe dos objetos
 function init() {
     'use strict';
 
-	 activeCamera = 1; //Definimos que a camara a utilizar no inicio do jogo é a camara 1, a ortográfica
+	   activeCamera = 1; //Definimos que a camara a utilizar no inicio do jogo é a camara 1, a ortográfica
      activeLight = true; //Define a 1 que é dia e a 0 que é noite
      activeMaterial = 1;
      ableToChange = true;
@@ -26,9 +22,10 @@ function init() {
      document.body.appendChild(renderer.domElement);
 
      createScene();
-	 createTrack();
-	 createCamera();
      createLights();
+
+	    createTrack();
+	     createCamera();
 
      createCar(0,0,0);
 
@@ -40,10 +37,10 @@ function init() {
 
 function animate() {
 	//Ciclo Update-Display
-	  update();
     render(); // Coloca os objetos em cena em exposição
-
     requestAnimationFrame(animate);
+    update();
+
 }
 
 function createScene() {
@@ -65,7 +62,7 @@ function createCamera(){
 
 	ChaseCamera= new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 3500);
 	BackCamera= new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 3500);
-    OrthoCamera = new THREE.OrthographicCamera(-1300, 1300, 790, -790, 0.1, 150);
+  OrthoCamera = new THREE.OrthographicCamera(-1300, 1300, 790, -790, 0.1, 150);
 
 	BackCamera.position.y = -1500;
 	BackCamera.position.z = 1000;
@@ -120,7 +117,6 @@ function onKeyDown(e) {
     {
         move.right = true;
     }
-
 }
 
 function onKeyPressed(e) {
@@ -136,19 +132,14 @@ function onKeyPressed(e) {
 		activeCamera = 3;
 	}
 
-  if (e.keyCode == 78 || e.keyCode == 110) {
-    activeLight = !activeLight;
+  if (e.keycode == 67 || e.keycode == 99) {
+    console.log("mudouC");
+    candleLight = !candleLight;
   }
 
-<<<<<<< HEAD
-  if (e.keycode == 67 || e.keycode == 99) {
-    candleLight = !candleLight;
-=======
-  if (e.keycode == 99 || e.keycode == 67){
-      if (ableToChange){
-          candleLight = !candleLight;
-      }
->>>>>>> 788332d520da2f86cb2bdd7dd1a01943e2b5dee2
+  if (e.keyCode == 78 || e.keyCode == 110) {
+    console.log("mudouL");
+    activeLight = !activeLight;
   }
 
   if (e.keyCode == 71 || e.keyCode == 103) {
@@ -255,17 +246,12 @@ function onResize(){
 
 }
 
-function update(){
+function update() {
     'use strict'
     var delta = clock.getDelta();
 
-<<<<<<< HEAD
     scene.traverse(function(node) {
 
-=======
-    // updateCandles();
-	scene.traverse(function(node) {
->>>>>>> 788332d520da2f86cb2bdd7dd1a01943e2b5dee2
 		if (node instanceof THREE.Mesh) {
 			node.material.wireframe = wrfrm;
             changeMaterial(node);
@@ -275,56 +261,32 @@ function update(){
 			position(node);
 			movement(node, delta);
 			collision(node);
+
+
+      if (node.isDirectionalLight) {
+        if (activeLight) {
+          node.intensity = 1;
         }
-        if (node.isDirectionalLight) {
-            if (activeLight) {
-                node.intensity = 1;
-            }
-            else {
-                node.intensity = 0;
-            }
+        else {
+          node.intensity = 0;
         }
-<<<<<<< HEAD
       }
 
       if (node.isPointLight) {
         if (candleLight) {
-          node.power = 1;
+          node.intensity = 1;
         }
         else {
-          node.power = 0;
+          node.intensity = 0;
         }
       }
 
-		}
-	});
-}
-=======
-        if (node.isPointLight){
-            if (candleLight) {
-                node.intensity = 1;
-            }
-            else {
-                node.intensity = 0;
-            }
-        }
-    });
-}
+    }
 
-// function updateCandles(){
-//     'use strict'
-//     if (candleLight == false){
-// 		for (var p = 0; p < pointlights.length; p++) {
-// 			scene.remove(pointlights[p]);
-// 		}
-// 	}
-// 	if (candleLight == true) {
-// 		for (p = 0; p < pointlights.length; p++) {
-// 			scene.add(pointlights[p]);
-// 		}
-// 	}
-// }
->>>>>>> 788332d520da2f86cb2bdd7dd1a01943e2b5dee2
+
+	});
+
+}
 
 function movement(object, time) {
 	'use strict';
@@ -521,32 +483,35 @@ function createLights() {
 	directionalLight.position.set( 0, 0, 50 );
   scene.add(directionalLight);
 
-  var light1 = new THREE.PointLight( 0xFFFFFF, 1, 600 );
+  var light1 = new THREE.PointLight( 0xFFFFFF, 1, 500 );
   light1.position.set(0, 300, 150);
-  scene.add(light1);
+  pointlights.push(light1);
 
-  var light2 = new THREE.PointLight( 0xFFFFFF, 1, 600 );
+  var light2 = new THREE.PointLight( 0xFFFFFF, 1, 500 );
   light2.position.set(0, -300, 150);
-  scene.add(light2);
+  pointlights.push(light2);
 
-  var light3 = new THREE.PointLight( 0xFFFFFF, 1, 600 );
+  var light3 = new THREE.PointLight( 0xFFFFFF, 1, 500 );
   light3.position.set(650, -250, 150);
-  scene.add(light3);
+  pointlights.push(light3);
 
-  var light4 = new THREE.PointLight( 0xFFFFFF, 1, 600 );
+  var light4 = new THREE.PointLight( 0xFFFFFF, 1, 500 );
   light4.position.set(650, 250, 150);
-  scene.add(light4);
+  pointlights.push(light4);
 
-  var light5 = new THREE.PointLight( 0xFFFFFF, 1, 600 );
+  var light5 = new THREE.PointLight( 0xFFFFFF, 1, 500 );
   light5.position.set(-650, 250, 150);
-  scene.add(light5);
+  pointlights.push(light5);
 
-  var light6 = new THREE.PointLight( 0xFFFFFF, 1, 600 );
+  var light6 = new THREE.PointLight( 0xFFFFFF, 1, 500 );
   light6.position.set(-650, -250, 150);
-  scene.add(light6);
+  pointlights.push(light6);
+
+  for(p=0; p<pointlights.length; p++) {
+    scene.add(pointlights[p]);
+  }
 
 }
-
 
 function changeMaterial(object) {
   'use strict';
