@@ -163,7 +163,13 @@ function createCandle(x,y) {
 
   	scene.add(candle);
 
+<<<<<<< HEAD
 
+=======
+    var light = new THREE.PointLight( 0xFFFFFF, 1, 380);
+    light.position.set(x, y, 90);
+    scene.add(light);
+>>>>>>> 788332d520da2f86cb2bdd7dd1a01943e2b5dee2
 }
 
 function createTrack() {

@@ -19,37 +19,86 @@ var move = {
 function createWheel(obj, x, y, z){
     'use strict';
 
-    geometry = new THREE.TorusBufferGeometry(2, 2, 8, 100);
-    material = new THREE.MeshBasicMaterial({color: 0x000000, wireframe: false} );
-    var torus = new THREE.Mesh(geometry, material);
+    geometry = new THREE.Geometry();
+    geometry.vertices.push(
+        new THREE.Vector3(1,0,0), //centro da parte da frente
 
-    torus.position.x = x;
-    torus.position.y = y;
-    torus.position.z = z;
+        new THREE.Vector3(1, -1, -1.75), //1
+        new THREE.Vector3(1, -2, 0 ), //2
+        new THREE.Vector3(1, -1, 1.75), //3
+        new THREE.Vector3(1, 1, 1.75), //4
+        new THREE.Vector3(1, 2, 0), //5
+        new THREE.Vector3(1, 1, -1.75), //6
 
-    torus.rotation.x = Math.PI/2;
+        new THREE.Vector3(-1, 0, 0), //centro da parte de tras
 
-    obj.add(torus);
+        new THREE.Vector3(-1, -1, -1.75), //8
+        new THREE.Vector3(-1, -2, 0), //9
+        new THREE.Vector3(-1, -1, 1.75), //10
+        new THREE.Vector3(-1, 1, 1.75), //11
+        new THREE.Vector3(-1, 2, 0), //12
+        new THREE.Vector3(-1, 1, -1.75) //13
+
+    )
+
+    geometry.faces.push(new THREE.Face3(0,1,2));//parte da frente da roda
+    geometry.faces.push(new THREE.Face3(0,2,3));
+    geometry.faces.push(new THREE.Face3(0,3,4));
+    geometry.faces.push(new THREE.Face3(0,4,5));
+    geometry.faces.push(new THREE.Face3(0,5,6));
+    geometry.faces.push(new THREE.Face3(0,6,1));
+
+    geometry.faces.push(new THREE.Face3(7,8,9)); // parte de tras da roda
+    geometry.faces.push(new THREE.Face3(7,9,10));
+    geometry.faces.push(new THREE.Face3(7,10,11));
+    geometry.faces.push(new THREE.Face3(7,11,12));
+    geometry.faces.push(new THREE.Face3(7,12,13));
+    geometry.faces.push(new THREE.Face3(7,13,8));
+
+    //preenchimento da roda
+    geometry.faces.push(new THREE.Face3(4,11,10));
+    geometry.faces.push(new THREE.Face3(4,10,3));
+
+    geometry.faces.push(new THREE.Face3(2,9,10));
+    geometry.faces.push(new THREE.Face3(2,10,3));
+    
+    geometry.faces.push(new THREE.Face3(1,8,9));
+    geometry.faces.push(new THREE.Face3(1,9,2));
+
+    geometry.faces.push(new THREE.Face3(6,13,8));
+    geometry.faces.push(new THREE.Face3(6,8,1));
+
+    geometry.faces.push(new THREE.Face3(6,13,12));
+    geometry.faces.push(new THREE.Face3(6,12,5));
+
+    geometry.faces.push(new THREE.Face3(5,12,11));
+    geometry.faces.push(new THREE.Face3(5,11,4));
+
+    geometry.computeFaceNormals();
+
+    var basicmat = new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: false});
+    var lambertmat = new THREE.MeshLambertMaterial( { color: 0x000000, wireframe: false});
+    var phongmat = new THREE.MeshPhongMaterial( { color: 0x000000, wireframe: false});
+    var wheelmaterial = lambertmat;
+
+    var wheelmesh = new THREE.Mesh(geometry, wheelmaterial);
+
+    wheelmesh.position.set(x,y,z);
+
+    wheelmesh.rotation.x = Math.PI/2;
+
+    obj.add(wheelmesh);
 }
 
-function addTop(car, x, y, z){
-    'use strict'
-
-    geometry = new THREE.BoxGeometry(x, y, z);
-    material = new THREE.MeshBasicMaterial( {color: 0xff2800, wireframe: false} );
-    var top = new THREE.Mesh(geometry, material);
-
-	top.position.z = 2;
-    car.add(top); // Adiciona ao carro uma parte de cima
-}
 
 function createCar(x, y, z){
     'use strict'
 
-    var chassis, top, acceleration;
+    var acceleration;
 
-    chassis = new THREE.Object3D();
 	car = new THREE.Object3D();
+
+	car.add( ChaseCamera ); // A camara fa7 parte do grafo de cena do carro, logo sofre todas as transformações deste
 
 	car.vx = 0; /* Velocidade eixo x */
 	car.vy = 0; /* Velocidade eixo y */
@@ -60,18 +109,54 @@ function createCar(x, y, z){
 	car.r = Math.sqrt(281.25);  //Raio da 'bounding sphere' imaginária, sqrt(15^2 + 7,5^2)
 
 
-    createWheel(chassis, -x/2 + 5, y/2, 1);
-    createWheel(chassis, x/2 - 5, y/2, 1);
-    createWheel(chassis, x/2 - 5, -y/2, 1);
-    createWheel(chassis, -x/2 + 5, -y/2, 1);
+	geometry = new THREE.Geometry();
+	geometry.vertices.push(
+    	new THREE.Vector3(15, -7.5, 0), //0
+    	new THREE.Vector3(-15, -7.5, 0 ), //1
+    	new THREE.Vector3(-15, -7.5, 7), //2
+    	new THREE.Vector3(15,-7.5, 7), //3
 
-    addTop(car, x, y, z);
+    	new THREE.Vector3(-15, 7.5, 0), //4
+    	new THREE.Vector3(-15, 7.5, 7), //5
+    	new THREE.Vector3(15, 7.5, 0), //6
+    	new THREE.Vector3(15, 7.5, 7) //7
+    )
 
-	   car.add( ChaseCamera ); // A camara faz parte do grafo de cena do carro, logo sofre todas as transformações deste
+    geometry.faces.push(new THREE.Face3(0,2,1));//face da frente com regra da mao esquerda
+    geometry.faces.push(new THREE.Face3(0,3,2));
 
-    car.add(chassis);
+    geometry.faces.push(new THREE.Face3(4,5,6));//face de tras com regra da mao direita
+    geometry.faces.push(new THREE.Face3(6,5,7));
 
-	car.position.z = 7;
+	geometry.faces.push(new THREE.Face3(0,6,7));//face do lado direito
+	geometry.faces.push(new THREE.Face3(0,7,3));
+
+    geometry.faces.push(new THREE.Face3(4,1,5));//face do lado esquerdo, normal para dentro (face virada para o user na camera 3)
+    geometry.faces.push(new THREE.Face3(1,2,5));
+
+	geometry.faces.push(new THREE.Face3(3,7,5));//face de cima
+	geometry.faces.push(new THREE.Face3(3,5,2));
+
+	geometry.faces.push(new THREE.Face3(0,6,4));//face de baixo
+	geometry.faces.push(new THREE.Face3(0,4,1));
+
+    geometry.computeFaceNormals();
+    
+    var basicmat = new THREE.MeshBasicMaterial( { color: 0xff2800, wireframe: false});
+    var lambertmat = new THREE.MeshLambertMaterial( { color: 0xff2800, wireframe: false});
+    var phongmat = new THREE.MeshPhongMaterial( { color: 0xff2800, wireframe: false});
+    var carmaterial = lambertmat;
+
+    var carmesh = new THREE.Mesh(geometry, carmaterial);
+
+	car.add(carmesh);
+
+	car.position.set(x,y,z);
+
+    createWheel(car, 12.5, 7.4, 2);
+    createWheel(car, 12.5, -7.4, 2);
+    createWheel(car, -12.5, 7.4, 2);
+    createWheel(car, -12.5, -7.4, 2);
 
 	scene.add(car);
 

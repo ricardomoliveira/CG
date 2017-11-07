@@ -1,6 +1,10 @@
 /* global */
 
+<<<<<<< HEAD
 var scene, renderer, candleLight, ableToChange, activeMaterial, directionalLight, candleLight, activeCamera, activeLight, OrthoCamera, ChaseCamera, BackCamera, geometry, material, mesh, clock, table, pointlights = [];
+=======
+var scene, renderer, ableToChange, activeMaterial, directionalLight, candleLight, activeCamera, activeLight, OrthoCamera, ChaseCamera, BackCamera, geometry, material, mesh, clock, table;
+>>>>>>> 788332d520da2f86cb2bdd7dd1a01943e2b5dee2
 
 var ratioMesa = 1500/2500; // Altura da mesa / Comprimento da mesa : assegura o rácio de aspeto desta
 
@@ -9,7 +13,7 @@ var wrfrm = false; // Atributo de wireframe dos objetos
 function init() {
     'use strict';
 
-	   activeCamera = 1; //Definimos que a camara a utilizar no inicio do jogo é a camara 1, a ortográfica
+	 activeCamera = 1; //Definimos que a camara a utilizar no inicio do jogo é a camara 1, a ortográfica
      activeLight = true; //Define a 1 que é dia e a 0 que é noite
      activeMaterial = 1;
      ableToChange = true;
@@ -22,11 +26,11 @@ function init() {
      document.body.appendChild(renderer.domElement);
 
      createScene();
-	   createTrack();
-	   createCamera();
+	 createTrack();
+	 createCamera();
      createLights();
 
-     createCar(30, 15, 7);
+     createCar(0,0,0);
 
      window.addEventListener( 'resize', onResize); // Deteta os eventos de alteração de tamanho da janela
      window.addEventListener( 'keydown', onKeyDown, false ); // Deteta os eventos de tecla a ser premida
@@ -121,7 +125,7 @@ function onKeyDown(e) {
 
 function onKeyPressed(e) {
 	if (e.keyCode == 49) {
-			activeCamera = 1;
+		activeCamera = 1;
 	}
 
 	if (e.keyCode == 50) {
@@ -136,8 +140,15 @@ function onKeyPressed(e) {
     activeLight = !activeLight;
   }
 
+<<<<<<< HEAD
   if (e.keycode == 67 || e.keycode == 99) {
     candleLight = !candleLight;
+=======
+  if (e.keycode == 99 || e.keycode == 67){
+      if (ableToChange){
+          candleLight = !candleLight;
+      }
+>>>>>>> 788332d520da2f86cb2bdd7dd1a01943e2b5dee2
   }
 
   if (e.keyCode == 71 || e.keyCode == 103) {
@@ -248,25 +259,32 @@ function update(){
     'use strict'
     var delta = clock.getDelta();
 
+<<<<<<< HEAD
     scene.traverse(function(node) {
 
+=======
+    // updateCandles();
+	scene.traverse(function(node) {
+>>>>>>> 788332d520da2f86cb2bdd7dd1a01943e2b5dee2
 		if (node instanceof THREE.Mesh) {
 			node.material.wireframe = wrfrm;
-      changeMaterial(node);
+            changeMaterial(node);
 		}
 
 		if(node instanceof THREE.Object3D && node!=null) {
 			position(node);
 			movement(node, delta);
 			collision(node);
-
-      if (node.isDirectionalLight) {
-        if (activeLight) {
-          node.intensity = 1;
         }
-        else {
-          node.intensity = 0;
+        if (node.isDirectionalLight) {
+            if (activeLight) {
+                node.intensity = 1;
+            }
+            else {
+                node.intensity = 0;
+            }
         }
+<<<<<<< HEAD
       }
 
       if (node.isPointLight) {
@@ -281,6 +299,32 @@ function update(){
 		}
 	});
 }
+=======
+        if (node.isPointLight){
+            if (candleLight) {
+                node.intensity = 1;
+            }
+            else {
+                node.intensity = 0;
+            }
+        }
+    });
+}
+
+// function updateCandles(){
+//     'use strict'
+//     if (candleLight == false){
+// 		for (var p = 0; p < pointlights.length; p++) {
+// 			scene.remove(pointlights[p]);
+// 		}
+// 	}
+// 	if (candleLight == true) {
+// 		for (p = 0; p < pointlights.length; p++) {
+// 			scene.add(pointlights[p]);
+// 		}
+// 	}
+// }
+>>>>>>> 788332d520da2f86cb2bdd7dd1a01943e2b5dee2
 
 function movement(object, time) {
 	'use strict';
