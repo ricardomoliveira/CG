@@ -48,12 +48,31 @@ function createWheel(obj, x, y, z){
     geometry.faces.push(new THREE.Face3(0,5,6));
     geometry.faces.push(new THREE.Face3(0,6,1));
 
-    geometry.faces.push(new THREE.Face3(7,8,9));
+    geometry.faces.push(new THREE.Face3(7,8,9)); // parte de tras da roda
     geometry.faces.push(new THREE.Face3(7,9,10));
     geometry.faces.push(new THREE.Face3(7,10,11));
     geometry.faces.push(new THREE.Face3(7,11,12));
     geometry.faces.push(new THREE.Face3(7,12,13));
     geometry.faces.push(new THREE.Face3(7,13,8));
+
+    //preenchimento da roda
+    geometry.faces.push(new THREE.Face3(4,11,10));
+    geometry.faces.push(new THREE.Face3(4,10,3));
+
+    geometry.faces.push(new THREE.Face3(2,9,10));
+    geometry.faces.push(new THREE.Face3(2,10,3));
+    
+    geometry.faces.push(new THREE.Face3(1,8,9));
+    geometry.faces.push(new THREE.Face3(1,9,2));
+
+    geometry.faces.push(new THREE.Face3(6,13,8));
+    geometry.faces.push(new THREE.Face3(6,8,1));
+
+    geometry.faces.push(new THREE.Face3(6,13,12));
+    geometry.faces.push(new THREE.Face3(6,12,5));
+
+    geometry.faces.push(new THREE.Face3(5,12,11));
+    geometry.faces.push(new THREE.Face3(5,11,4));
 
     geometry.computeFaceNormals();
 
