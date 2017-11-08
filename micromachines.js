@@ -13,7 +13,7 @@ function init() {
      activeLight = true; //Define a 1 que é dia e a 0 que é noite
      activeMaterial = 1;
      ableToChange = true;
-     candleLight = true;
+     candleLight = false;
 
 	   clock =  new THREE.Clock();
 
@@ -91,6 +91,7 @@ function render() {
 }
 
 function onKeyDown(e) {
+    console.log(e.keycode);
 	if (e.keyCode == 65 || e.keyCode == 97) {
 		if (wrfrm == false)
 			wrfrm = true;
@@ -120,6 +121,7 @@ function onKeyDown(e) {
 }
 
 function onKeyPressed(e) {
+    console.log(e.keycode);
 	if (e.keyCode == 49) {
 		activeCamera = 1;
 	}
@@ -132,7 +134,7 @@ function onKeyPressed(e) {
 		activeCamera = 3;
 	}
 
-  if (e.keycode == 67 || e.keycode == 99) {
+  if (e.keyCode == 67 || e.keyCode == 99) {
     console.log("mudouC");
     candleLight = !candleLight;
   }
@@ -140,6 +142,7 @@ function onKeyPressed(e) {
   if (e.keyCode == 78 || e.keyCode == 110) {
     console.log("mudouN");
     activeLight = !activeLight;
+
   }
 
   if (e.keyCode == 71 || e.keyCode == 103) {
@@ -517,7 +520,12 @@ function changeMaterial(object) {
   'use strict';
 
   if (activeMaterial == 0) {
-    object.material = new THREE.MeshBasicMaterial({color: object.material.color, wireframe: false});
+    if (object.category == "car"){
+
+    }
+    else{
+        object.material = new THREE.MeshBasicMaterial({color: object.material.color, wireframe: false});
+    }
   }
 
   if(activeMaterial == 1){
