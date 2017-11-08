@@ -61,7 +61,7 @@ function createWheel(obj, x, y, z){
 
     geometry.faces.push(new THREE.Face3(2,9,10));
     geometry.faces.push(new THREE.Face3(2,10,3));
-    
+
     geometry.faces.push(new THREE.Face3(1,8,9));
     geometry.faces.push(new THREE.Face3(1,9,2));
 
@@ -76,10 +76,8 @@ function createWheel(obj, x, y, z){
 
     geometry.computeFaceNormals();
 
-    var basicmat = new THREE.MeshBasicMaterial( { color: 0x000000, wireframe: false});
-    var lambertmat = new THREE.MeshLambertMaterial( { color: 0x000000, wireframe: false});
-    var phongmat = new THREE.MeshPhongMaterial( { color: 0x000000, wireframe: false});
-    var wheelmaterial = lambertmat;
+
+    var wheelmaterial = new THREE.MeshPhongMaterial( { color: 0x000000, wireframe: false});
 
     var wheelmesh = new THREE.Mesh(geometry, wheelmaterial);
 
@@ -88,6 +86,50 @@ function createWheel(obj, x, y, z){
     wheelmesh.rotation.x = Math.PI/2;
 
     obj.add(wheelmesh);
+}
+
+function createRoofTop(obj){
+	'use strict'
+
+	geometry = new THREE.Geometry();
+
+    geometry.vertices.push(
+    	new THREE.Vector3(-15, -7.5, 7), //0
+    	new THREE.Vector3(15,-7.5, 7), //1
+    	new THREE.Vector3(-15, 7.5, 7), //2
+    	new THREE.Vector3(15, 7.5, 7), //3
+
+		new THREE.Vector3(12, -4.5, 11), //4
+		new THREE.Vector3(12, 4.5, 11), //5
+		new THREE.Vector3(-12, 4.5, 11), //6
+		new THREE.Vector3(-12, -4.5, 11) //7
+    )
+	//faces laterais do trapezio solido
+	geometry.faces.push(new THREE.Face3(1, 3, 5));
+	geometry.faces.push(new THREE.Face3(1, 5, 4));
+	geometry.faces.push(new THREE.Face3(3, 2, 6));
+	geometry.faces.push(new THREE.Face3(3, 6, 5));
+	geometry.faces.push(new THREE.Face3(2, 0, 7));
+	geometry.faces.push(new THREE.Face3(2, 7, 6));
+	geometry.faces.push(new THREE.Face3(0, 1, 4));
+	geometry.faces.push(new THREE.Face3(0, 4, 7));
+
+	//face do topo
+	geometry.faces.push(new THREE.Face3(4, 5, 6));
+	geometry.faces.push(new THREE.Face3(4, 6, 7));
+
+	//face de baixo
+	geometry.faces.push(new THREE.Face3(0, 2, 1));
+	geometry.faces.push(new THREE.Face3(1, 2, 3));
+
+	geometry.computeFaceNormals();
+
+	var topmaterial = new THREE.MeshPhongMaterial( { color: 0xff2800, wireframe: false});
+
+	var topmesh = new THREE.Mesh(geometry, topmaterial);
+
+	obj.add(topmesh);
+
 }
 
 
@@ -141,22 +183,21 @@ function createCar(x, y, z){
 	geometry.faces.push(new THREE.Face3(0,4,1));
 
     geometry.computeFaceNormals();
-    
-    var basicmat = new THREE.MeshBasicMaterial( { color: 0xff2800, wireframe: false});
-    var lambertmat = new THREE.MeshLambertMaterial( { color: 0xff2800, wireframe: false});
-    var phongmat = new THREE.MeshPhongMaterial( { color: 0xff2800, wireframe: false});
-    var carmaterial = lambertmat;
+
+    var carmaterial = new THREE.MeshPhongMaterial( { color: 0xff2800, wireframe: false});
 
     var carmesh = new THREE.Mesh(geometry, carmaterial);
 
 	car.add(carmesh);
 
-	car.position.set(x,y,z);
 
+	createRoofTop(car);
     createWheel(car, 12.5, 7.4, 2);
     createWheel(car, 12.5, -7.4, 2);
     createWheel(car, -12.5, 7.4, 2);
     createWheel(car, -12.5, -7.4, 2);
+
+	car.position.set(x,y,z);
 
 	scene.add(car);
 

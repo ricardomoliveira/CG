@@ -138,7 +138,7 @@ function onKeyPressed(e) {
   }
 
   if (e.keyCode == 78 || e.keyCode == 110) {
-    console.log("mudouL");
+    console.log("mudouN");
     activeLight = !activeLight;
   }
 
