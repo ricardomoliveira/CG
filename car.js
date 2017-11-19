@@ -199,6 +199,60 @@ function createCar(x, y, z){
 
 	car.position.set(x,y,z);
 
-	scene.add(car);
+	return car;
+}
 
+function createLives(x, y, z) {
+
+car = new THREE.Object3D();
+
+geometry = new THREE.Geometry();
+geometry.vertices.push(
+		new THREE.Vector3(15, -7.5, 0), //0
+		new THREE.Vector3(-15, -7.5, 0 ), //1
+		new THREE.Vector3(-15, -7.5, 7), //2
+		new THREE.Vector3(15,-7.5, 7), //3
+
+		new THREE.Vector3(-15, 7.5, 0), //4
+		new THREE.Vector3(-15, 7.5, 7), //5
+		new THREE.Vector3(15, 7.5, 0), //6
+		new THREE.Vector3(15, 7.5, 7) //7
+	)
+
+	geometry.faces.push(new THREE.Face3(0,2,1));//face da frente com regra da mao esquerda
+	geometry.faces.push(new THREE.Face3(0,3,2));
+
+	geometry.faces.push(new THREE.Face3(4,5,6));//face de tras com regra da mao direita
+	geometry.faces.push(new THREE.Face3(6,5,7));
+
+geometry.faces.push(new THREE.Face3(0,6,7));//face do lado direito
+geometry.faces.push(new THREE.Face3(0,7,3));
+
+	geometry.faces.push(new THREE.Face3(4,1,5));//face do lado esquerdo, normal para dentro (face virada para o user na camera 3)
+	geometry.faces.push(new THREE.Face3(1,2,5));
+
+geometry.faces.push(new THREE.Face3(3,7,5));//face de cima
+geometry.faces.push(new THREE.Face3(3,5,2));
+
+geometry.faces.push(new THREE.Face3(0,6,4));//face de baixo
+geometry.faces.push(new THREE.Face3(0,4,1));
+
+	geometry.computeFaceNormals();
+
+	var carmaterial = new THREE.MeshPhongMaterial( { color: 0xff2800, wireframe: false});
+
+	var carmesh = new THREE.Mesh(geometry, carmaterial);
+
+car.add(carmesh);
+
+
+createRoofTop(car);
+	createWheel(car, 12.5, 7.4, 2);
+	createWheel(car, 12.5, -7.4, 2);
+	createWheel(car, -12.5, 7.4, 2);
+	createWheel(car, -12.5, -7.4, 2);
+
+car.position.set(x,y,z);
+
+return car;
 }

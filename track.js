@@ -5,7 +5,7 @@ function createFloor(x, y, z) {
 
     material = new THREE.MeshBasicMaterial({ color: 0x696969, wireframe: false});
 
-    geometry = new THREE.CubeGeometry(2500, 1500, 1);
+    geometry = new THREE.BoxGeometry(2500, 1500, 1, 30, 30);
 
     mesh = new THREE.Mesh(geometry, material);
     table.add(mesh);
@@ -19,6 +19,8 @@ function createFloor(x, y, z) {
 }
 
 function createStart() {
+
+
   material = new THREE.MeshBasicMaterial({ color: 0xFFFFFF, wireframe: false});
 
   geometry = new THREE.CubeGeometry(15, 15, 1);
@@ -27,7 +29,7 @@ function createStart() {
 
   start.position.x = 0;
   start.position.y = 0;
-  start.position.z = 5;
+  start.position.z = 1;
 
   scene.add(start);
 
@@ -38,7 +40,7 @@ function createCheerio(x, y){
 
 	var cheerio = new THREE.Object3D();
     var geometry = new THREE.TorusBufferGeometry(12, 2.5, 8, 10);
-    var material = new THREE.MeshBasicMaterial({color: 0x000000});
+    var material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
     var torus = new THREE.Mesh(geometry, material);
 	cheerio.add(torus);
 

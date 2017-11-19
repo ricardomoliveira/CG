@@ -1,6 +1,6 @@
 /* global */
 
-var scene, p, renderer, candleLight, ableToChange, activeMaterial, directionalLight, candleLight, activeCamera, activeLight, OrthoCamera, ChaseCamera, BackCamera, geometry, material, mesh, clock, table, pointlights = [];
+var lives = [], scene, p, pause, renderer, livesCamera, livesScene, candleLight, ableToChange, activeMaterial, directionalLight, candleLight, activeCamera, activeLight, OrthoCamera, ChaseCamera, BackCamera, geometry, material, mesh, clock, table, pointlights = [];
 
 var ratioMesa = 1500/2500; // Altura da mesa / Comprimento da mesa : assegura o rácio de aspeto desta
 
@@ -14,6 +14,7 @@ function init() {
      activeMaterial = 1;
      ableToChange = true;
      candleLight = false;
+     pause = false;
 
 	   clock =  new THREE.Clock();
 
@@ -22,12 +23,13 @@ function init() {
      document.body.appendChild(renderer.domElement);
 
      createScene();
+     createCamera();
      createLights();
 
-	    createTrack();
-	     createCamera();
+	   createTrack();
+     //createPause();
 
-     createCar(0,0,0);
+     scene.add(createCar(0,0,0));
 
      window.addEventListener( 'resize', onResize); // Deteta os eventos de alteração de tamanho da janela
      window.addEventListener( 'keydown', onKeyDown, false ); // Deteta os eventos de tecla a ser premida
@@ -37,10 +39,15 @@ function init() {
 
 function animate() {
 	//Ciclo Update-Display
-    render(); // Coloca os objetos em cena em exposição
     requestAnimationFrame(animate);
-    update();
+    render(); // Coloca os objetos em cena em exposição
+    if (!pause) {
+      update();
+    }
+}
 
+function reload() {
+  location.reload();
 }
 
 function createScene() {
@@ -48,6 +55,14 @@ function createScene() {
 
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0xf0f0f0);
+
+    livesScene = new THREE.Scene();
+
+    for(var i=0; i<5 ;i++){
+  		car = createLives(5,-50+i*25,0);
+  		lives[i]=car;
+      livesScene.add(lives[i]);
+  	}
 
 	/*
 	var axisHelper = new THREE.AxisHelper( 200 ); //Para ajudar na orientação e visualização criou-se os eixos x, y e z
@@ -64,6 +79,13 @@ function createCamera(){
 	BackCamera= new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 3500);
   OrthoCamera = new THREE.OrthographicCamera(-1300, 1300, 790, -790, 0.1, 150);
 
+  livesCamera = new THREE.OrthographicCamera(window.innerWidth/-12,
+                                            window.innerWidth/12,
+                                            window.innerHeight/12,
+                                            window.innerHeight/-12,
+                                            -1000,
+                                            1000);
+
 	BackCamera.position.y = -1500;
 	BackCamera.position.z = 1000;
 	BackCamera.rotation.y = -90 * Math.PI / 180;
@@ -78,20 +100,33 @@ function createCamera(){
 
 	OrthoCamera.position.z=100;
 
+  livesCamera.position.set(0,0,100);
+  livesCamera.lookAt(livesScene.position);
+  livesCamera.aspect = renderer.getSize().width*0.1 / renderer.getSize().height;
+  livesCamera.updateProjectionMatrix();
+
 }
 
 function render() {
-    'use strict';
+  'use strict';
 
+  renderer.autoClear = false;
+  renderer.setViewport( 0, 0, window.innerWidth, window.innerHeight );
+  renderer.clear();
+
+
+  renderer.setViewport(0,0, window.innerWidth * 0.85, window.innerHeight);
 	//Definição da troca de câmara conforme a tecla premida --> flag ativada
 	if(activeCamera==1){renderer.render(scene,OrthoCamera);}
 	if(activeCamera==2){renderer.render(scene,BackCamera);}
 	if(activeCamera==3){renderer.render(scene,ChaseCamera);}
 
+  renderer.setViewport(window.innerWidth * 0.4, 0, window.innerWidth, window.innerHeight);
+  renderer.render(livesScene, livesCamera);
+
 }
 
 function onKeyDown(e) {
-    console.log(e.keycode);
 	if (e.keyCode == 65 || e.keyCode == 97) {
 		if (wrfrm == false)
 			wrfrm = true;
@@ -121,7 +156,6 @@ function onKeyDown(e) {
 }
 
 function onKeyPressed(e) {
-    console.log(e.keycode);
 	if (e.keyCode == 49) {
 		activeCamera = 1;
 	}
@@ -135,14 +169,11 @@ function onKeyPressed(e) {
 	}
 
   if (e.keyCode == 67 || e.keyCode == 99) {
-    console.log("mudouC");
     candleLight = !candleLight;
   }
 
   if (e.keyCode == 78 || e.keyCode == 110) {
-    console.log("mudouN");
     activeLight = !activeLight;
-
   }
 
   if (e.keyCode == 71 || e.keyCode == 103) {
@@ -167,6 +198,14 @@ function onKeyPressed(e) {
 
     ableToChange = !ableToChange;
 
+  }
+
+  if (e.keyCode == 83 || e.keyCode == 115) {
+    pause = !pause;
+  }
+
+  if (e.keyCode == 82 || e.keyCode == 114) {
+    reload();
   }
 }
 
@@ -257,7 +296,7 @@ function update() {
 
 		if (node instanceof THREE.Mesh) {
 			node.material.wireframe = wrfrm;
-            changeMaterial(node);
+      changeMaterial(node);
 		}
 
 		if(node instanceof THREE.Object3D && node!=null) {
@@ -453,7 +492,20 @@ function collision(object){
 						move.forward = false; //No momento da colisão o carro não pode avançar mais
 						object.vx = 0; //Para nao ter velocidade quando é redirecionado para o centro da mesa
 						object.vy = 0;
+
+
+            if (lives.length>1) {
+              livesScene.remove(lives[lives.length-1]);
+              lives.pop(lives.lenght-1);
+            }
+
+            else {
+              scene.remove(object);
+              livesScene.remove(lives[0]);
+              lives.pop(lives[0]);
+            }
 					}
+
 				}
 			}
 		});
@@ -481,6 +533,10 @@ function collision(object){
 
 function createLights() {
   'use strict';
+
+  var LivesLight = new THREE.DirectionalLight( 0xffffff, 1 );
+	LivesLight.position.set( 0, 0, 50 );
+	livesScene.add(LivesLight);
 
   var directionalLight = new THREE.DirectionalLight( 0xffffff, 1);
 	directionalLight.position.set( 0, 0, 50 );
@@ -520,20 +576,22 @@ function changeMaterial(object) {
   'use strict';
 
   if (activeMaterial == 0) {
-    if (object.category == "car"){
-
-    }
-    else{
-        object.material = new THREE.MeshBasicMaterial({color: object.material.color, wireframe: false});
-    }
+    object.material = new THREE.MeshBasicMaterial({color: object.material.color,
+      wireframe: false});
   }
 
   if(activeMaterial == 1){
-    object.material = new THREE.MeshPhongMaterial({color: object.material.color, wireframe: false});
+    object.material = new THREE.MeshPhongMaterial({color: object.material.color,
+      wireframe: false,
+      specular: 0x111111,
+      shininess: 50});
+
   }
 
   if(activeMaterial == 2) {
-    object.material = new THREE.MeshLambertMaterial({color: object.material.color});
+    object.material = new THREE.MeshLambertMaterial({color: object.material.color,
+      wireframe: false,
+      shininess: 0});
   }
 
 }
