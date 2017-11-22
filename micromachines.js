@@ -451,10 +451,21 @@ function position(object) {
 
 	if (object.category == "car") {
 		if (object.position.x >= 1250 || object.position.x <= -1250 || object.position.y >= 750 || object.position.y <= -750) {
-			object.visible = false; // Remove o carro de cena se sair de cima da mesa
-		}
-		else {
-			object.visible = true;
+      if (lives.length>1) {
+        livesScene.remove(lives[lives.length-1]);
+        lives.pop(lives.lenght-1);
+        move.forward = false; //No momento da colisão o carro não pode avançar mais
+        object.vx = 0; //Para nao ter velocidade quando é redirecionado para o centro da mesa
+        object.vy = 0;
+        object.position.set(0, 0, 7); //O carro volta ao início, no centro da mesa
+      }
+
+      else {
+        scene.remove(object);
+        livesScene.remove(lives[0]);
+        lives.pop(lives[0]);
+        gameover == true;
+      }
 		}
 	}
 
