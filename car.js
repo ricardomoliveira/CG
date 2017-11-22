@@ -142,6 +142,32 @@ function createCar(x, y, z){
 
 	car.add( ChaseCamera ); // A camara fa7 parte do grafo de cena do carro, logo sofre todas as transformações deste
 
+	//Criacão dos farois
+	var spotLight1 = new THREE.SpotLight( 0xffffff );
+	spotLight1.angle = Math.PI / 6;
+	spotLight1.distance = 100;
+	spotLight1.intensity = 5;
+	spotLight1.position.set(15, 7, 3.5);
+
+	var spotLight2 = new THREE.SpotLight( 0xffffff );
+	spotLight2.angle = Math.PI / 6;
+	spotLight2.distance = 100;
+	spotLight2.intensity = 5;
+	spotLight2.position.set(15, -7, 3.5);
+
+	var targetObject1 = new THREE.Object3D();
+	targetObject1.position.set(16, 7, 3.5);
+	spotLight1.target = targetObject1;
+
+	var targetObject2 = new THREE.Object3D();
+	targetObject2.position.set(16, -7, 3.5);
+	spotLight2.target = targetObject2;
+
+	car.add(spotLight1);
+	car.add(targetObject1);
+	car.add(spotLight2);
+	car.add(targetObject2);
+
 	car.vx = 0; /* Velocidade eixo x */
 	car.vy = 0; /* Velocidade eixo y */
 	car.acceleration = 10; /* Aceleração pré-definida do carro */

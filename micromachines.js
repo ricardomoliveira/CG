@@ -1,6 +1,6 @@
 /* global */
 
-var lives = [], scene, p, pause, renderer, livesCamera, livesScene, candleLight, ableToChange, activeMaterial, directionalLight, candleLight, activeCamera, activeLight, OrthoCamera, ChaseCamera, BackCamera, geometry, material, mesh, clock, table, pointlights = [];
+var lives = [], scene, p, pause, renderer, livesCamera, livesScene, candleLight, ableToChange, activeMaterial, directionalLight, candleLight, activeCamera, activeLight, OrthoCamera, ChaseCamera, BackCamera, geometry, material, mesh, clock, table, pointlights = [], spotLight1, targetObject1, spotLight2, targetObject2, spotlightFlag;
 
 var ratioMesa = 1500/2500; // Altura da mesa / Comprimento da mesa : assegura o rácio de aspeto desta
 
@@ -15,6 +15,8 @@ function init() {
      ableToChange = true;
      candleLight = false;
      pause = false;
+     spotlightFlag = false;
+
 
 	   clock =  new THREE.Clock();
 
@@ -187,6 +189,11 @@ function onKeyPressed(e) {
     }
   }
 
+  if (e.keyCode == 72 || e.keyCode == 104){
+      spotlightFlag = !spotlightFlag;
+
+  }
+
   if (e.keyCode == 76 || e.keyCode == 108) {
     if (ableToChange) {
       activeMaterial = 0;
@@ -296,35 +303,41 @@ function update() {
 
 		if (node instanceof THREE.Mesh) {
 			node.material.wireframe = wrfrm;
-      changeMaterial(node);
+            changeMaterial(node);
 		}
 
 		if(node instanceof THREE.Object3D && node!=null) {
 			position(node);
 			movement(node, delta);
 			collision(node);
-
-
-      if (node.isDirectionalLight) {
-        if (activeLight) {
-          node.intensity = 1;
         }
-        else {
-          node.intensity = 0;
-        }
-      }
 
-      if (node.isPointLight) {
-        if (candleLight) {
-          node.intensity = 1;
+        if (node.isDirectionalLight) {
+            if (activeLight) {
+                node.intensity = 1;
+            }
+            else {
+                node.intensity = 0;
+            }
         }
-        else {
-          node.intensity = 0;
+
+        if (node.isPointLight) {
+            if (candleLight) {
+              node.intensity = 1;
+            }
+            else {
+              node.intensity = 0;
+            }
         }
-      }
 
-    }
-
+        if (node.isSpotLight){
+            if (spotlightFlag) {
+                node.intensity = 5;
+            }
+            else {
+                node.intensity = 0;
+            }
+        }
 
 	});
 
@@ -348,7 +361,6 @@ function movement(object, time) {
 				object.vy += (object.acceleration*time) * Math.sin(object.angle);
 				object.vy *= object.drag * Math.sin(object.angle);
 				object.translateY(object.vy + (0.5)*object.acceleration*time*time);
-
 
 			}
 		if (move.backward == true) // Tecla Baixo
@@ -535,11 +547,11 @@ function createLights() {
   'use strict';
 
   var LivesLight = new THREE.DirectionalLight( 0xffffff, 1 );
-	LivesLight.position.set( 0, 0, 50 );
-	livesScene.add(LivesLight);
+  LivesLight.position.set( 0, 0, 50 );
+  livesScene.add(LivesLight);
 
   var directionalLight = new THREE.DirectionalLight( 0xffffff, 1);
-	directionalLight.position.set( 0, 0, 50 );
+  directionalLight.position.set( 0, 0, 50 );
   scene.add(directionalLight);
 
   var light1 = new THREE.PointLight( 0xFFFFFF, 1, 500 );
