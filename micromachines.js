@@ -25,7 +25,7 @@ function init() {
 	   renderer = new THREE.WebGLRenderer({ antialias: true });
      renderer.setSize(window.innerWidth, window.innerHeight);
      document.body.appendChild(renderer.domElement);
-
+     renderer.shadowMap.enabled = true;
      createScene();
      createCamera();
      createLights();
@@ -47,6 +47,9 @@ function animate() {
     render(); // Coloca os objetos em cena em exposição
     if (!pause) {
       update();
+    }
+    else {
+        createMessages();
     }
 }
 
@@ -351,7 +354,7 @@ function update() {
 
         if (node.isSpotLight){
             if (spotlightFlag) {
-                node.intensity = 5;
+                node.intensity = 3;
             }
             else {
                 node.intensity = 0;
@@ -643,6 +646,9 @@ function createMessages() {
 
 	if (pause == true) {
 		var msgmaterial = new THREE.MeshBasicMaterial({ map: pausetexture });
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set( 4, 4 );
 	}
 
 	if (gameover == true) {
