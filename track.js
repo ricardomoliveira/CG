@@ -3,9 +3,16 @@ function createFloor(x, y, z) {
 
     var table = new THREE.Object3D();
 
-    material = new THREE.MeshBasicMaterial({ color: 0x696969, wireframe: false});
+    var textureloader = new THREE.TextureLoader();
+    var floortexture = textureloader.load("solidblue.png");
 
-    geometry = new THREE.BoxGeometry(2500, 1500, 1, 30, 30);
+/*    floortexture.wrapS = floortexture.wrapT = THREE.RepeatWrapping;
+    floortexture.offset.set( 0, 0 );
+    floortexture.repeat.set( 2, 2 );*/
+
+    material = new THREE.MeshPhongMaterial({ map: floortexture, wireframe: false});
+
+    geometry = new THREE.BoxGeometry(2500, 1500, 1);
 
     mesh = new THREE.Mesh(geometry, material);
     table.add(mesh);

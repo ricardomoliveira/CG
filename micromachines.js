@@ -1,10 +1,12 @@
 /* global */
 
-var lives = [], scene, p, pause, renderer, livesCamera, livesScene, candleLight, ableToChange, activeMaterial, directionalLight, candleLight, activeCamera, activeLight, OrthoCamera, ChaseCamera, BackCamera, geometry, material, mesh, clock, table, pointlights = [];
+var lives = [], scene, p, pause, renderer, livesCamera, messagesScene, livesScene, candleLight, ableToChange, activeMaterial, directionalLight, candleLight, activeCamera, activeLight, OrthoCamera, ChaseCamera, BackCamera, geometry, material, mesh, clock, table, pointlights = [];
 
 var ratioMesa = 1500/2500; // Altura da mesa / Comprimento da mesa : assegura o rácio de aspeto desta
 
 var wrfrm = false; // Atributo de wireframe dos objetos
+
+var gameover = false;
 
 function init() {
     'use strict';
@@ -47,18 +49,22 @@ function animate() {
 }
 
 function reload() {
+
   location.reload();
 }
 
 function createScene() {
     'use strict';
 
+    messagesScene = new THREE.Scene();
+    messagesScene.background = new THREE.Color(0x000000);
+
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0xf0f0f0);
 
     livesScene = new THREE.Scene();
 
-    for(var i=0; i<5 ;i++){
+    for (var i=0; i<5 ;i++){
   		car = createLives(5,-50+i*25,0);
   		lives[i]=car;
       livesScene.add(lives[i]);
@@ -72,14 +78,15 @@ function createScene() {
 	createFloor(0, 0, 0);
 }
 
-function createCamera(){
+function createCamera() {
 	'use strict';
 
 	ChaseCamera= new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 3500);
 	BackCamera= new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 3500);
-  OrthoCamera = new THREE.OrthographicCamera(-1300, 1300, 790, -790, 0.1, 150);
+  	OrthoCamera = new THREE.OrthographicCamera(-1300, 1300, 790, -790, 0.1, 150);
+  	var MessagesCamera = new THREE.OrthographicCamera(-500, 500, 500, -500, 0.1, 1.5);
 
-  livesCamera = new THREE.OrthographicCamera(window.innerWidth/-12,
+	livesCamera = new THREE.OrthographicCamera(window.innerWidth/-12,
                                             window.innerWidth/12,
                                             window.innerHeight/12,
                                             window.innerHeight/-12,
@@ -105,6 +112,10 @@ function createCamera(){
   livesCamera.aspect = renderer.getSize().width*0.1 / renderer.getSize().height;
   livesCamera.updateProjectionMatrix();
 
+  MessagesCamera.position.set(0, 0, 0.5);
+  MessagesCamera.lookAt(messagesScene.position);
+  MessagesCamera.updateProjectionMatrix();
+
 }
 
 function render() {
@@ -116,6 +127,7 @@ function render() {
 
 
   renderer.setViewport(0,0, window.innerWidth * 0.85, window.innerHeight);
+
 	//Definição da troca de câmara conforme a tecla premida --> flag ativada
 	if(activeCamera==1){renderer.render(scene,OrthoCamera);}
 	if(activeCamera==2){renderer.render(scene,BackCamera);}
@@ -123,6 +135,13 @@ function render() {
 
   renderer.setViewport(window.innerWidth * 0.4, 0, window.innerWidth, window.innerHeight);
   renderer.render(livesScene, livesCamera);
+
+  if(pause == true || gameover == true) {
+
+  	renderer.clear();
+  	renderer.render(messagesScene, MessagesCamera);
+
+  }
 
 }
 
@@ -426,6 +445,7 @@ function position(object) {
 			object.visible = true;
 		}
 	}
+
 }
 
 function collision(object){
@@ -496,14 +516,16 @@ function collision(object){
 
             if (lives.length>1) {
               livesScene.remove(lives[lives.length-1]);
-              lives.pop(lives.lenght-1);
+              lives.pop(lives.lenght-1)
+
             }
 
             else {
               scene.remove(object);
               livesScene.remove(lives[0]);
               lives.pop(lives[0]);
-            }
+              gameover == true;
+          	}
 					}
 
 				}
@@ -529,6 +551,7 @@ function collision(object){
 	        }
 	    });
 	}
+
 }
 
 function createLights() {
@@ -595,3 +618,30 @@ function changeMaterial(object) {
   }
 
 }
+
+function createMessages() {
+
+	var msgTable = new THREE.Object3D();
+
+	var msggeometry = new THREE.PlaneGeometry(600, 450);
+
+	var pausetexture = new THREE.TextureLoader().load("./textures/pause.jpg");
+
+	var gameovertexture = new THREE.TextureLoader().load("./textures/gameover.png");
+
+	if (pause == true) {
+		var msgmaterial = new THREE.MeshBasicMaterial({ map: pausetexture });
+	}
+
+	if (gameover == true) {
+		var msgmaterial = new THREE.MeshBasicMaterial({ map: gameovertexture });
+	}
+
+	mesh = new THREE.Mesh(msggeometry, msgmaterial);
+
+	msgTable.add(mesh);
+
+	messagesScene.add(msgTable);
+
+}
+
