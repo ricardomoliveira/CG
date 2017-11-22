@@ -156,11 +156,11 @@ function createCar(x, y, z){
 	spotLight2.position.set(15, -7, 3.5);
 
 	var targetObject1 = new THREE.Object3D();
-	targetObject1.position.set(16, 7, 3.5);
+	targetObject1.position.set(16, 7.15, 3.5);
 	spotLight1.target = targetObject1;
 
 	var targetObject2 = new THREE.Object3D();
-	targetObject2.position.set(16, -7, 3.5);
+	targetObject2.position.set(16, -7.15, 3.5);
 	spotLight2.target = targetObject2;
 
 	car.add(spotLight1);
