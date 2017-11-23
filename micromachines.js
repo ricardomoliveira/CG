@@ -50,9 +50,9 @@ function animate() {
     }
     else {
         if (gameover)
-            createMessages("./texture/gameover.png");
+            createMessages("./textures/gameover.png");
         else
-            createMessages("./textures/pause1.jpg");
+            createMessages("./textures/pause1.png");
     }
 
 
@@ -66,9 +66,6 @@ function reload() {
 function createScene() {
     'use strict';
 
-    // messagesScene = new THREE.Scene();
-    // messagesScene.background = new THREE.Color(0xffff00);
-
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0xf0f0f0);
 
@@ -79,11 +76,6 @@ function createScene() {
   		lives[i]=car;
       livesScene.add(lives[i]);
   	}
-
-	/*
-	var axisHelper = new THREE.AxisHelper( 200 ); //Para ajudar na orientação e visualização criou-se os eixos x, y e z
-	scene.add( axisHelper );
-	*/
 
 	createFloor(0, 0, 0);
 }
@@ -122,10 +114,6 @@ function createCamera() {
   livesCamera.aspect = renderer.getSize().width*0.1 / renderer.getSize().height;
   livesCamera.updateProjectionMatrix();
 
-  // MessagesCamera.position.set(0, 0, 0.5);
-  // MessagesCamera.lookAt(messagesScene.position);
-  // MessagesCamera.updateProjectionMatrix();
-
 }
 
 function render() {
@@ -145,13 +133,6 @@ function render() {
 
   renderer.setViewport(window.innerWidth * 0.4, 0, window.innerWidth, window.innerHeight);
   renderer.render(livesScene, livesCamera);
-
-  // if(pause == true || gameover == true) {
-  //
-  // 	renderer.clear();
-  // 	renderer.render(messagesScene, MessagesCamera);
-
-  // }
 
 }
 
@@ -189,14 +170,12 @@ function onKeyPressed(e) {
 		activeCamera = 1;
 	}
 
-	if (e.keyCode == 50) {
-        if (!cantChange)
-		      activeCamera = 2;
+	if (e.keyCode == 50 && !pause) {
+		activeCamera = 2;
 	}
 
-	if (e.keyCode == 51) {
-        if (!cantChange)
-		      activeCamera = 3;
+	if (e.keyCode == 51 && !pause) {
+    activeCamera = 3;
 	}
 
   if (e.keyCode == 67 || e.keyCode == 99) {
@@ -238,13 +217,11 @@ function onKeyPressed(e) {
 
   if (e.keyCode == 83 || e.keyCode == 115) {
     if (!pause){
-        pause = true;
+        pause = !pause;
         activeCamera = 1;
-        cantChange = true;
     }
     else {
-        pause = false;
-        cantChange = false;
+        pause = !pause;
     }
   }
 
@@ -348,11 +325,9 @@ function update() {
 			movement(node, delta);
 			collision(node);
 
-            if (node.category == "msgtable"){
-                if (!pause){
-                    scene.remove(node);
-                }
-            }
+      if (node.category == "msgtable") {
+          if (!pause)
+            scene.remove(node);
         }
 
         if (node.isDirectionalLight) {
@@ -381,7 +356,7 @@ function update() {
                 node.intensity = 0;
             }
         }
-
+}
 	});
 
 }
@@ -571,7 +546,7 @@ function collision(object){
               scene.remove(object);
               livesScene.remove(lives[0]);
               lives.pop(lives[0]);
-              gameover == true;
+              gameover = true;
           	}
 					}
 
@@ -668,13 +643,11 @@ function changeMaterial(object) {
 
 function createMessages(texture) {
     'use strict'
-	msgTable = new THREE.Object3D();
 
-	var msggeometry = new THREE.BoxGeometry(1500, 1145, 1);
-
+  msgTable = new THREE.Object3D();
+	var msggeometry = new THREE.BoxGeometry(300, 150, 1);
 	var tabletexture = new THREE.TextureLoader().load(texture);
-
-    var msgmaterial = new THREE.MeshLambertMaterial({ map: tabletexture });
+  var msgmaterial = new THREE.MeshLambertMaterial({ map: tabletexture });
     tabletexture.wrapS = THREE.RepeatWrapping;
     tabletexture.wrapT = THREE.RepeatWrapping;
     tabletexture.repeat.set( 1, 1 );
@@ -682,8 +655,8 @@ function createMessages(texture) {
 	mesh = new THREE.Mesh(msggeometry, msgmaterial);
 
 	msgTable.add(mesh);
-    msgTable.position.set(0, 0, 70);
-    msgTable.category = "msgtable";
+  msgTable.position.set(0, 0, 20);
+  msgTable.category = "msgtable";
 
 	scene.add(msgTable);
 
