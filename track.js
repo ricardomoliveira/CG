@@ -8,9 +8,9 @@ function createFloor(x, y, z) {
     texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set( 1, 1 );
 
-    material = new THREE.MeshPhongMaterial({ map: texture});
+    material = new THREE.MeshPhongMaterial({ map: texture, transparent: true});
 
-    geometry = new THREE.BoxGeometry(2500, 1500, 2);
+    geometry = new THREE.BoxGeometry(2500, 1500, 5);
 
     mesh = new THREE.Mesh(geometry, material);
     table.add(mesh);

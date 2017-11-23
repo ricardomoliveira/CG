@@ -24,6 +24,7 @@ function init() {
 	   clock =  new THREE.Clock();
 
 	   renderer = new THREE.WebGLRenderer({ antialias: true });
+     renderer.sortObjects = false;
      renderer.setSize(window.innerWidth, window.innerHeight);
      document.body.appendChild(renderer.domElement);
      renderer.shadowMap.enabled = true;
@@ -83,9 +84,7 @@ function createCamera() {
 
 	ChaseCamera= new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 3500);
 	BackCamera= new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 3500);
-  	OrthoCamera = new THREE.OrthographicCamera(-1300, 1300, 790, -790, 10, 100);
-  	var MessagesCamera = new THREE.OrthographicCamera(-500, 500, 500, -500, 0.1, 1.5);
-
+  OrthoCamera = new THREE.OrthographicCamera(-1300, 1300, 790, -790, 1, 100);
 	livesCamera = new THREE.OrthographicCamera(window.innerWidth/-12,
                                             window.innerWidth/12,
                                             window.innerHeight/12,
@@ -643,9 +642,9 @@ function createMessages(texture) {
     'use strict'
 
   msgTable = new THREE.Object3D();
-	var msggeometry = new THREE.BoxGeometry(300, 150, 5);
+	var msggeometry = new THREE.BoxGeometry(500, 250, 5);
 	var tabletexture = new THREE.TextureLoader().load(texture);
-  var msgmaterial = new THREE.MeshLambertMaterial({ map: tabletexture });
+  var msgmaterial = new THREE.MeshLambertMaterial({ map: tabletexture, transparent: true});
     tabletexture.wrapS = THREE.RepeatWrapping;
     tabletexture.wrapT = THREE.RepeatWrapping;
     tabletexture.repeat.set( 1, 1 );
@@ -653,7 +652,7 @@ function createMessages(texture) {
 	mesh = new THREE.Mesh(msggeometry, msgmaterial);
 
 	msgTable.add(mesh);
-  msgTable.position.set(0, 0, 20);
+  msgTable.position.set(0, 0, 80);
   msgTable.category = "msgtable";
 
 	scene.add(msgTable);
