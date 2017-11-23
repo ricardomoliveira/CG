@@ -537,7 +537,7 @@ function collision(object){
 						object.vy = 0;
 
 
-            if (lives.length>1) {
+            if (lives.length > 1) {
               livesScene.remove(lives[lives.length-1]);
               lives.pop(lives.lenght-1)
 
