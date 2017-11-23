@@ -45,16 +45,14 @@ function animate() {
 	//Ciclo Update-Display
     requestAnimationFrame(animate);
     render(); // Coloca os objetos em cena em exposição
-    if (!pause) {
+
+    if (!pause && !gameover) {
       update();
     }
-    else {
-        if (gameover)
-            createMessages("./textures/gameover.png");
-        else
-            createMessages("./textures/pause1.png");
-    }
-
+    if (pause && !gameover)
+      createMessages("./textures/pause1.jpg");
+    if (gameover)
+      createMessages("./textures/gameover.png");
 
 }
 
