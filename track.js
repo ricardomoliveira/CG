@@ -6,8 +6,8 @@ function createFloor(x, y, z) {
     var texture = new THREE.TextureLoader().load('./textures/floortexture.jpg');
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set( 2, 2 );
-    
+    texture.repeat.set( 1, 1 );
+
     material = new THREE.MeshPhongMaterial({ map: texture});
 
     geometry = new THREE.BoxGeometry(2500, 1500, 2);

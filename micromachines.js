@@ -83,7 +83,7 @@ function createCamera() {
 
 	ChaseCamera= new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 3500);
 	BackCamera= new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 3500);
-  	OrthoCamera = new THREE.OrthographicCamera(-1300, 1300, 790, -790, 0.1, 150);
+  	OrthoCamera = new THREE.OrthographicCamera(-1300, 1300, 790, -790, 10, 100);
   	var MessagesCamera = new THREE.OrthographicCamera(-500, 500, 500, -500, 0.1, 1.5);
 
 	livesCamera = new THREE.OrthographicCamera(window.innerWidth/-12,
@@ -461,7 +461,7 @@ function position(object) {
         scene.remove(object);
         livesScene.remove(lives[0]);
         lives.pop(lives[0]);
-        gameover == true;
+        gameover = true;
       }
 		}
 	}
@@ -643,7 +643,7 @@ function createMessages(texture) {
     'use strict'
 
   msgTable = new THREE.Object3D();
-	var msggeometry = new THREE.BoxGeometry(300, 150, 1);
+	var msggeometry = new THREE.BoxGeometry(300, 150, 5);
 	var tabletexture = new THREE.TextureLoader().load(texture);
   var msgmaterial = new THREE.MeshLambertMaterial({ map: tabletexture });
     tabletexture.wrapS = THREE.RepeatWrapping;
