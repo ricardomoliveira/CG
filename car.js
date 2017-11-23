@@ -146,13 +146,13 @@ function createCar(x, y, z){
 	var spotLight1 = new THREE.SpotLight( 0xffffff );
 	spotLight1.angle = Math.PI / 6;
 	spotLight1.distance = 100;
-	spotLight1.intensity = 5;
+	spotLight1.intensity = 3;
 	spotLight1.position.set(15, 7, 3.5);
 
 	var spotLight2 = new THREE.SpotLight( 0xffffff );
 	spotLight2.angle = Math.PI / 6;
 	spotLight2.distance = 100;
-	spotLight2.intensity = 5;
+	spotLight2.intensity = 3;
 	spotLight2.position.set(15, -7, 3.5);
 
 	var targetObject1 = new THREE.Object3D();
