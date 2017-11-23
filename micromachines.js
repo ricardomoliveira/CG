@@ -1,6 +1,6 @@
 /* global */
 
-var lives = [], scene, p, pause, renderer, livesCamera, livesScene, messagesScene, candleLight, ableToChange, activeMaterial, directionalLight, candleLight, activeCamera, activeLight, OrthoCamera, ChaseCamera, BackCamera, geometry, material, mesh, clock, table, pointlights = [], spotLight1, targetObject1, spotLight2, targetObject2, spotlightFlag;
+var lives = [], scene, p, pause, cantChange, renderer, livesCamera, livesScene, msgTable, candleLight, ableToChange, activeMaterial, directionalLight, candleLight, activeCamera, activeLight, OrthoCamera, ChaseCamera, BackCamera, geometry, material, mesh, clock, table, pointlights = [], spotLight1, targetObject1, spotLight2, targetObject2, spotlightFlag;
 
 var ratioMesa = 1500/2500; // Altura da mesa / Comprimento da mesa : assegura o rácio de aspeto desta
 
@@ -11,13 +11,14 @@ var gameover = false;
 function init() {
     'use strict';
 
-	   activeCamera = 1; //Definimos que a camara a utilizar no inicio do jogo é a camara 1, a ortográfica
+	 activeCamera = 1; //Definimos que a camara a utilizar no inicio do jogo é a camara 1, a ortográfica
      activeLight = true; //Define a 1 que é dia e a 0 que é noite
      activeMaterial = 1;
      ableToChange = true;
      candleLight = false;
      pause = false;
      spotlightFlag = false;
+     cantChange = false;
 
 
 	   clock =  new THREE.Clock();
@@ -31,7 +32,6 @@ function init() {
      createLights();
 
 	   createTrack();
-     //createPause();
 
      scene.add(createCar(0,0,0));
 
@@ -49,8 +49,13 @@ function animate() {
       update();
     }
     else {
-        createMessages();
+        if (gameover)
+            createMessages("./texture/gameover.png");
+        else
+            createMessages("./textures/pause1.jpg");
     }
+
+
 }
 
 function reload() {
@@ -61,8 +66,8 @@ function reload() {
 function createScene() {
     'use strict';
 
-    messagesScene = new THREE.Scene();
-    messagesScene.background = new THREE.Color(0x000000);
+    // messagesScene = new THREE.Scene();
+    // messagesScene.background = new THREE.Color(0xffff00);
 
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0xf0f0f0);
@@ -117,9 +122,9 @@ function createCamera() {
   livesCamera.aspect = renderer.getSize().width*0.1 / renderer.getSize().height;
   livesCamera.updateProjectionMatrix();
 
-  MessagesCamera.position.set(0, 0, 0.5);
-  MessagesCamera.lookAt(messagesScene.position);
-  MessagesCamera.updateProjectionMatrix();
+  // MessagesCamera.position.set(0, 0, 0.5);
+  // MessagesCamera.lookAt(messagesScene.position);
+  // MessagesCamera.updateProjectionMatrix();
 
 }
 
@@ -141,12 +146,12 @@ function render() {
   renderer.setViewport(window.innerWidth * 0.4, 0, window.innerWidth, window.innerHeight);
   renderer.render(livesScene, livesCamera);
 
-  if(pause == true || gameover == true) {
+  // if(pause == true || gameover == true) {
+  //
+  // 	renderer.clear();
+  // 	renderer.render(messagesScene, MessagesCamera);
 
-  	renderer.clear();
-  	renderer.render(messagesScene, MessagesCamera);
-
-  }
+  // }
 
 }
 
@@ -185,11 +190,13 @@ function onKeyPressed(e) {
 	}
 
 	if (e.keyCode == 50) {
-		activeCamera = 2;
+        if (!cantChange)
+		      activeCamera = 2;
 	}
 
 	if (e.keyCode == 51) {
-		activeCamera = 3;
+        if (!cantChange)
+		      activeCamera = 3;
 	}
 
   if (e.keyCode == 67 || e.keyCode == 99) {
@@ -230,7 +237,15 @@ function onKeyPressed(e) {
   }
 
   if (e.keyCode == 83 || e.keyCode == 115) {
-    pause = !pause;
+    if (!pause){
+        pause = true;
+        activeCamera = 1;
+        cantChange = true;
+    }
+    else {
+        pause = false;
+        cantChange = false;
+    }
   }
 
   if (e.keyCode == 82 || e.keyCode == 114) {
@@ -332,6 +347,12 @@ function update() {
 			position(node);
 			movement(node, delta);
 			collision(node);
+
+            if (node.category == "msgtable"){
+                if (!pause){
+                    scene.remove(node);
+                }
+            }
         }
 
         if (node.isDirectionalLight) {
@@ -645,31 +666,25 @@ function changeMaterial(object) {
 
 }
 
-function createMessages() {
+function createMessages(texture) {
+    'use strict'
+	msgTable = new THREE.Object3D();
 
-	var msgTable = new THREE.Object3D();
+	var msggeometry = new THREE.BoxGeometry(1500, 1145, 1);
 
-	var msggeometry = new THREE.PlaneGeometry(600, 450);
+	var tabletexture = new THREE.TextureLoader().load(texture);
 
-	var pausetexture = new THREE.TextureLoader().load("./textures/pause.jpg");
-
-	var gameovertexture = new THREE.TextureLoader().load("./textures/gameover.png");
-
-	if (pause == true) {
-		var msgmaterial = new THREE.MeshBasicMaterial({ map: pausetexture });
-        texture.wrapS = THREE.RepeatWrapping;
-        texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set( 4, 4 );
-	}
-
-	if (gameover == true) {
-		var msgmaterial = new THREE.MeshBasicMaterial({ map: gameovertexture });
-	}
+    var msgmaterial = new THREE.MeshLambertMaterial({ map: tabletexture });
+    tabletexture.wrapS = THREE.RepeatWrapping;
+    tabletexture.wrapT = THREE.RepeatWrapping;
+    tabletexture.repeat.set( 1, 1 );
 
 	mesh = new THREE.Mesh(msggeometry, msgmaterial);
 
 	msgTable.add(mesh);
+    msgTable.position.set(0, 0, 70);
+    msgTable.category = "msgtable";
 
-	messagesScene.add(msgTable);
+	scene.add(msgTable);
 
 }

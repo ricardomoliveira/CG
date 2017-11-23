@@ -6,15 +6,16 @@ function createFloor(x, y, z) {
     var texture = new THREE.TextureLoader().load('./textures/floortexture.jpg');
     texture.wrapS = THREE.RepeatWrapping;
     texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set( 4, 4 );
-    
+    texture.repeat.set( 2, 2 );
+
+
     // var floortexture = textureloader.load("floortexture");
 
 /*    floortexture.wrapS = floortexture.wrapT = THREE.RepeatWrapping;
     floortexture.offset.set( 0, 0 );
     floortexture.repeat.set( 2, 2 );*/
 
-    material = new THREE.MeshPhongMaterial({color:0xffff00, map: texture, wireframe: false});
+    material = new THREE.MeshPhongMaterial({ map: texture});
 
     geometry = new THREE.BoxGeometry(2500, 1500, 2);
 
